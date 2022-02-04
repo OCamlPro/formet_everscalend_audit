@@ -1,0 +1,701 @@
+
+\chapter{Contract RootTokenContract}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt RootTokenContract.sol}
+
+\section{Contract Inheritance}
+
+
+\noindent\begin{tabular}{|l|p{5cm}|}\hline
+IRootTokenContract & \\\hline
+IBurnableTokenRootContract & \\\hline
+IBurnableByRootTokenRootContract & \\\hline
+IPausable & \\\hline
+ITransferOwner & \\\hline
+ISendSurplusGas & \\\hline
+IVersioned & \\\hline
+\end{tabular}
+
+
+\section{Static Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+uint256 & \_{}randomNonce &  \\\hline
+bytes & name &  \\\hline
+ & & used in @17.RootTokenContract.getDetails\\\hline
+bytes & symbol &  \\\hline
+ & & used in @17.RootTokenContract.getDetails\\\hline
+uint8 & decimals &  \\\hline
+ & & used in @17.RootTokenContract.getDetails\\\hline
+TvmCell & wallet\_{}code &  \\\hline
+ & & used in @17.RootTokenContract.getWalletCode\\\hline
+ & & used in @17.RootTokenContract.getExpectedWalletAddress\\\hline
+ & & used in @17.RootTokenContract.getExpectedWalletAddress\\\hline
+ & & used in @17.RootTokenContract.deployWallet\\\hline
+ & & used in @17.RootTokenContract.deployWallet\\\hline
+ & & used in @17.RootTokenContract.deployEmptyWallet\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=29]
+    uint256 static _randomNonce;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=31]
+    bytes public static name;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=32]
+    bytes public static symbol;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=33]
+    uint8 public static decimals;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=35]
+    TvmCell static wallet_code;
+\end{lstlisting}
+
+\section{Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+uint128 & total\_{}supply &  \\\hline
+ & & assigned in @17.RootTokenContract.tokensBurned\\\hline
+ & & used in @17.RootTokenContract.tokensBurned\\\hline
+ & & assigned in @17.RootTokenContract.mint\\\hline
+ & & used in @17.RootTokenContract.mint\\\hline
+ & & used in @17.RootTokenContract.getTotalSupply\\\hline
+ & & used in @17.RootTokenContract.getDetails\\\hline
+ & & assigned in @17.RootTokenContract.deployWallet\\\hline
+ & & used in @17.RootTokenContract.deployWallet\\\hline
+ & & assigned in @17.RootTokenContract.:onBounce\\\hline
+ & & used in @17.RootTokenContract.:onBounce\\\hline
+ & & assigned in @17.RootTokenContract.:constructor\\\hline
+ & & used in @17.RootTokenContract.:constructor\\\hline
+uint256 & root\_{}public\_{}key &  \\\hline
+ & & assigned in @17.RootTokenContract.transferOwner\\\hline
+ & & used in @17.RootTokenContract.transferOwner\\\hline
+ & & used in @17.RootTokenContract.isExternalOwner\\\hline
+ & & used in @17.RootTokenContract.isExternalOwner\\\hline
+ & & used in @17.RootTokenContract.getDetails\\\hline
+ & & assigned in @17.RootTokenContract.:constructor\\\hline
+ & & used in @17.RootTokenContract.:constructor\\\hline
+address & root\_{}owner\_{}address &  \\\hline
+ & & assigned in @17.RootTokenContract.transferOwner\\\hline
+ & & used in @17.RootTokenContract.transferOwner\\\hline
+ & & used in @17.RootTokenContract.isInternalOwner\\\hline
+ & & used in @17.RootTokenContract.isInternalOwner\\\hline
+ & & used in @17.RootTokenContract.getDetails\\\hline
+ & & used in @17.RootTokenContract.deployWallet\\\hline
+ & & used in @17.RootTokenContract.deployWallet\\\hline
+ & & assigned in @17.RootTokenContract.:constructor\\\hline
+ & & used in @17.RootTokenContract.:constructor\\\hline
+uint128 & start\_{}gas\_{}balance &  \\\hline
+ & & used in @17.RootTokenContract.sendSurplusGas\\\hline
+ & & used in @17.RootTokenContract.deployWallet\\\hline
+ & & assigned in @17.RootTokenContract.:constructor\\\hline
+ & & used in @17.RootTokenContract.:constructor\\\hline
+bool & paused &  \\\hline
+ & & used in @17.RootTokenContract.tokensBurned\\\hline
+ & & assigned in @17.RootTokenContract.setPaused\\\hline
+ & & used in @17.RootTokenContract.setPaused\\\hline
+ & & used in @17.RootTokenContract.sendPausedCallbackTo\\\hline
+ & & assigned in @17.RootTokenContract.:constructor\\\hline
+ & & used in @17.RootTokenContract.:constructor\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=37]
+    uint128 total_supply;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=39]
+    uint256 root_public_key;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=40]
+    address root_owner_address;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=41]
+    uint128 public start_gas_balance;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=43]
+    bool public paused;
+\end{lstlisting}
+
+\section{Modifier Definitions}
+
+
+\subsection{Modifier onlyOwner}
+
+
+\begin{lstlisting}[firstnumber=459]
+    modifier onlyOwner() {
+        require(isOwner(), RootTokenContractErrors.error_message_sender_is_not_my_owner);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyInternalOwner}
+
+
+\begin{lstlisting}[firstnumber=464]
+    modifier onlyInternalOwner() {
+        require(isInternalOwner(), RootTokenContractErrors.error_message_sender_is_not_my_owner);
+        _;
+    }
+\end{lstlisting}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for RootTokenContract (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=49]
+    constructor(uint256 root_public_key_, address root_owner_address_) public {
+        require((root_public_key_ != 0 && root_owner_address_.value == 0) ||
+                (root_public_key_ == 0 && root_owner_address_.value != 0),
+                RootTokenContractErrors.error_define_public_key_or_owner_address);
+        tvm.accept();
+
+        root_public_key = root_public_key_;
+        root_owner_address = root_owner_address_;
+
+        total_supply = 0;
+        paused = false;
+
+        start_gas_balance = address(this).balance;
+    }
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Fallback function}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=524]
+    fallback() external {
+    }
+\end{lstlisting}
+
+\subsection{OnBounce function}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=515]
+    onBounce(TvmSlice slice) external {
+        tvm.accept();
+        uint32 functionId = slice.decode(uint32);
+        if (functionId == tvm.functionId(ITONTokenWallet.accept)) {
+            uint128 latest_bounced_tokens = slice.decode(uint128);
+            total_supply -= latest_bounced_tokens;
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function deployEmptyWallet}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=238]
+    function deployEmptyWallet(
+        uint128 deploy_grams,
+        uint256 wallet_public_key_,
+        address owner_address_,
+        address gas_back_address
+    )
+        override
+        external
+    returns (
+        address
+    ) {
+        require((owner_address_.value != 0 && wallet_public_key_ == 0) ||
+                (owner_address_.value == 0 && wallet_public_key_ != 0),
+                RootTokenContractErrors.error_define_public_key_or_owner_address);
+
+        tvm.rawReserve(address(this).balance - msg.value, 2);
+
+        address wallet = new TONTokenWallet{
+            value: deploy_grams,
+            flag: 1,
+            code: wallet_code,
+            pubkey: wallet_public_key_,
+            varInit: {
+                root_address: address(this),
+                code: wallet_code,
+                wallet_public_key: wallet_public_key_,
+                owner_address: owner_address_
+            }
+        }();
+
+        if (gas_back_address.value != 0) {
+            gas_back_address.transfer({ value: 0, flag: 128 });
+        } else {
+            msg.sender.transfer({ value: 0, flag: 128 });
+        }
+
+        return wallet;
+    }
+\end{lstlisting}
+
+\subsection{Function deployWallet}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=165]
+    function deployWallet(
+        uint128 tokens,
+        uint128 deploy_grams,
+        uint256 wallet_public_key_,
+        address owner_address_,
+        address gas_back_address
+    )
+        override
+        external
+        onlyOwner
+    returns(
+        address
+    ) {
+        require(tokens >= 0);
+        require((owner_address_.value != 0 && wallet_public_key_ == 0) ||
+                (owner_address_.value == 0 && wallet_public_key_ != 0),
+                RootTokenContractErrors.error_define_public_key_or_owner_address);
+
+        if(root_owner_address.value == 0) {
+            tvm.accept();
+        } else {
+            tvm.rawReserve(math.max(start_gas_balance, address(this).balance - msg.value), 2);
+        }
+
+        TvmCell stateInit = tvm.buildStateInit({
+            contr: TONTokenWallet,
+            varInit: {
+                root_address: address(this),
+                code: wallet_code,
+                wallet_public_key: wallet_public_key_,
+                owner_address: owner_address_
+            },
+            pubkey: wallet_public_key_,
+            code: wallet_code
+        });
+
+        address wallet;
+
+        if(deploy_grams > 0) {
+            wallet = new TONTokenWallet{
+                stateInit: stateInit,
+                value: deploy_grams,
+                wid: address(this).wid,
+                flag: 1
+            }();
+        } else {
+            wallet = address(tvm.hash(stateInit));
+        }
+
+        ITONTokenWallet(wallet).accept(tokens);
+
+        total_supply += tokens;
+
+        if (root_owner_address.value != 0) {
+            if (gas_back_address.value != 0) {
+                gas_back_address.transfer({ value: 0, flag: 128 });
+            } else {
+                msg.sender.transfer({ value: 0, flag: 128 });
+            }
+        }
+
+        return wallet;
+    }
+\end{lstlisting}
+
+\subsection{Function getDetails}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=78]
+    function getDetails() override external view responsible returns (IRootTokenContractDetails) {
+        return { value: 0, bounce: false, flag: 64 } IRootTokenContractDetails(
+            name,
+            symbol,
+            decimals,
+            root_public_key,
+            root_owner_address,
+            total_supply
+        );
+    }
+\end{lstlisting}
+
+\subsection{Function getTotalSupply}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=93]
+    function getTotalSupply() override external view responsible returns (uint128) {
+        return { value: 0, bounce: false, flag: 64 } total_supply;
+    }
+\end{lstlisting}
+
+\subsection{Function getVersion}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=64]
+    function getVersion() override external pure responsible returns (uint32) {
+        return 4;
+    }
+\end{lstlisting}
+
+\subsection{Function getWalletAddress}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=112]
+    function getWalletAddress(
+        uint256 wallet_public_key_,
+        address owner_address_
+    )
+        override
+        external
+        view
+        responsible
+    returns (
+        address
+    ) {
+        require((owner_address_.value != 0 && wallet_public_key_ == 0) ||
+                (owner_address_.value == 0 && wallet_public_key_ != 0),
+                RootTokenContractErrors.error_define_public_key_or_owner_address);
+        return { value: 0, bounce: false, flag: 64 } getExpectedWalletAddress(wallet_public_key_, owner_address_);
+    }
+\end{lstlisting}
+
+\subsection{Function getWalletCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=101]
+    function getWalletCode() override external view responsible returns (TvmCell) {
+        return { value: 0, bounce: false, flag: 64 } wallet_code;
+    }
+\end{lstlisting}
+
+\subsection{Function mint}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=283]
+    function mint(
+        uint128 tokens,
+        address to
+    )
+        override
+        external
+        onlyOwner
+    {
+        tvm.accept();
+
+        ITONTokenWallet(to).accept(tokens);
+
+        total_supply += tokens;
+    }
+\end{lstlisting}
+
+\subsection{Function proxyBurn}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=308]
+    function proxyBurn(
+        uint128 tokens,
+        address sender_address,
+        address send_gas_to,
+        address callback_address,
+        TvmCell callback_payload
+    )
+        override
+        external
+        onlyInternalOwner
+    {
+        tvm.rawReserve(address(this).balance - msg.value, 2);
+
+        address send_gas_to_ = send_gas_to;
+        address expectedWalletAddress = getExpectedWalletAddress(0, sender_address);
+
+        if (send_gas_to.value == 0) {
+            send_gas_to_ = sender_address;
+        }
+
+        IBurnableByRootTokenWallet(expectedWalletAddress).burnByRoot{value: 0, flag: 128}(
+            tokens,
+            send_gas_to_,
+            callback_address,
+            callback_payload
+        );
+    }
+\end{lstlisting}
+
+\subsection{Function sendExpectedWalletAddress}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=135]
+    function sendExpectedWalletAddress(
+        uint256 wallet_public_key_,
+        address owner_address_,
+        address to
+    )
+        override
+        external
+    {
+        tvm.rawReserve(address(this).balance - msg.value, 2);
+
+        address wallet = getExpectedWalletAddress(wallet_public_key_, owner_address_);
+        IExpectedWalletAddressCallback(to).expectedWalletAddressCallback{value: 0, flag: 128}(
+            wallet,
+            wallet_public_key_,
+            owner_address_
+        );
+    }
+\end{lstlisting}
+
+\subsection{Function sendPausedCallbackTo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=424]
+    function sendPausedCallbackTo(
+        uint64 callback_id,
+        address callback_addr
+    )
+        override
+        external
+    {
+        tvm.rawReserve(address(this).balance - msg.value, 2);
+        IPausedCallback(callback_addr).pausedCallback{ value: 0, flag: 128 }(callback_id, paused);
+    }
+\end{lstlisting}
+
+\subsection{Function sendSurplusGas}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=387]
+    function sendSurplusGas(
+        address to
+    )
+        override
+        external
+        onlyInternalOwner
+    {
+        tvm.rawReserve(start_gas_balance, 2);
+        IReceiveSurplusGas(to).receiveSurplusGas{ value: 0, flag: 128 }();
+    }
+\end{lstlisting}
+
+\subsection{Function setPaused}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=408]
+    function setPaused(
+        bool value
+    )
+        override
+        external
+        onlyOwner
+    {
+        tvm.accept();
+        paused = value;
+    }
+\end{lstlisting}
+
+\subsection{Function tokensBurned}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=348]
+    function tokensBurned(
+        uint128 tokens,
+        uint256 sender_public_key,
+        address sender_address,
+        address send_gas_to,
+        address callback_address,
+        TvmCell callback_payload
+    ) override external {
+
+        require(!paused, RootTokenContractErrors.error_paused);
+
+        address expectedWalletAddress = getExpectedWalletAddress(sender_public_key, sender_address);
+
+        require(msg.sender == expectedWalletAddress, RootTokenContractErrors.error_message_sender_is_not_good_wallet);
+
+        tvm.rawReserve(address(this).balance - msg.value, 2);
+
+        total_supply -= tokens;
+
+        if (callback_address.value == 0) {
+            send_gas_to.transfer({ value: 0, flag: 128 });
+        } else {
+            IBurnTokensCallback(callback_address).burnCallback{value: 0, flag: 128}(
+                tokens,
+                callback_payload,
+                sender_public_key,
+                sender_address,
+                expectedWalletAddress,
+                send_gas_to
+            );
+        }
+
+    }
+\end{lstlisting}
+
+\subsection{Function transferOwner}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=441]
+    function transferOwner(
+        uint256 root_public_key_,
+        address root_owner_address_
+    )
+        override
+        external
+        onlyOwner
+    {
+        require((root_public_key_ != 0 && root_owner_address_.value == 0) ||
+                (root_public_key_ == 0 && root_owner_address_.value != 0),
+                RootTokenContractErrors.error_define_public_key_or_owner_address);
+        tvm.accept();
+        root_public_key = root_public_key_;
+        root_owner_address = root_owner_address_;
+    }
+\end{lstlisting}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function getExpectedWalletAddress}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=486]
+    function getExpectedWalletAddress(
+        uint256 wallet_public_key_,
+        address owner_address_
+    )
+        private
+        inline
+        view
+    returns (
+        address
+    ) {
+        TvmCell stateInit = tvm.buildStateInit({
+            contr: TONTokenWallet,
+            varInit: {
+                root_address: address(this),
+                code: wallet_code,
+                wallet_public_key: wallet_public_key_,
+                owner_address: owner_address_
+            },
+            pubkey: wallet_public_key_,
+            code: wallet_code
+        });
+
+        return address(tvm.hash(stateInit));
+    }
+\end{lstlisting}
+
+\subsection{Function isExternalOwner}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=477]
+    function isExternalOwner() private inline view returns (bool) {
+        return root_public_key != 0 && root_public_key == msg.pubkey();
+    }
+\end{lstlisting}
+
+\subsection{Function isInternalOwner}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=473]
+    function isInternalOwner() private inline view returns (bool) {
+        return root_owner_address.value != 0 && root_owner_address == msg.sender;
+    }
+\end{lstlisting}
+
+\subsection{Function isOwner}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=469]
+    function isOwner() private inline view returns (bool) {
+        return isInternalOwner() || isExternalOwner();
+    }
+\end{lstlisting}

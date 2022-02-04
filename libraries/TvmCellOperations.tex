@@ -1,0 +1,41 @@
+
+\chapter{Library TvmCellOperations}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt TvmCellOperations.sol}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function decodeOperation}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=4]
+    function decodeOperation(TvmCell input) internal pure returns(uint8 operationId, TvmSlice data) {
+        TvmSlice s = input.toSlice();
+        operationId = s.decode(uint8);
+        data = s.loadRefAsSlice();
+    }
+\end{lstlisting}
+
+\subsection{Function encodeOperation}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=10]
+    function encodeOperation(uint8 operationId, TvmCell input) internal pure returns (TvmCell result) {
+        TvmBuilder builder;
+        builder.store(operationId);
+        builder.store(input);
+        result = builder.toCell();
+    }
+\end{lstlisting}

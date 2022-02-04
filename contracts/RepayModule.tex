@@ -1,0 +1,401 @@
+
+\chapter{Contract RepayModule}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt RepayModule.sol}
+
+\section{Contract Inheritance}
+
+
+\noindent\begin{tabular}{|l|p{5cm}|}\hline
+IRoles & \\\hline
+IModule & \\\hline
+IContractStateCache & \\\hline
+IContractAddressSG & \\\hline
+IRepayModule & \\\hline
+IUpgradableContract & \\\hline
+\end{tabular}
+
+
+\section{Event Definitions}
+
+
+\begin{lstlisting}[firstnumber=18]
+    event RepayBorrow(uint32 marketId, MarketDelta marketDelta, address tonWallet, uint256 tokenDelta);
+\end{lstlisting}
+
+\section{Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+address & marketAddress &  \\\hline
+ & & used in @8.RepayModule.upgradeContractCode\\\hline
+ & & assigned in @8.RepayModule.setMarketAddress\\\hline
+ & & used in @8.RepayModule.setMarketAddress\\\hline
+ & & used in @8.RepayModule.repayLoan\\\hline
+ & & assigned in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.getContractAddresses\\\hline
+address & userAccountManager &  \\\hline
+ & & used in @8.RepayModule.upgradeContractCode\\\hline
+ & & assigned in @8.RepayModule.setUserAccountManager\\\hline
+ & & used in @8.RepayModule.setUserAccountManager\\\hline
+ & & used in @8.RepayModule.resumeOperation\\\hline
+ & & used in @8.RepayModule.performAction\\\hline
+ & & assigned in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.getContractAddresses\\\hline
+uint32 & contractCodeVersion &  \\\hline
+ & & assigned in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.onCodeUpgrade\\\hline
+mapping (uint32 =$>$ MarketInfo) & marketInfo &  \\\hline
+ & & used in @8.RepayModule.upgradeContractCode\\\hline
+ & & assigned in @8.RepayModule.updateCache\\\hline
+ & & used in @8.RepayModule.updateCache\\\hline
+ & & assigned in @8.RepayModule.resumeOperation\\\hline
+ & & used in @8.RepayModule.resumeOperation\\\hline
+ & & used in @8.RepayModule.repayLoan\\\hline
+ & & used in @8.RepayModule.repayLoan\\\hline
+ & & used in @8.RepayModule.repayLoan\\\hline
+ & & assigned in @8.RepayModule.performAction\\\hline
+ & & used in @8.RepayModule.performAction\\\hline
+ & & assigned in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.getModuleState\\\hline
+ & & used in @8.RepayModule.\_{}createUpdatedIndexes\\\hline
+mapping (address =$>$ fraction) & tokenPrices &  \\\hline
+ & & used in @8.RepayModule.upgradeContractCode\\\hline
+ & & assigned in @8.RepayModule.updateCache\\\hline
+ & & used in @8.RepayModule.updateCache\\\hline
+ & & assigned in @8.RepayModule.resumeOperation\\\hline
+ & & used in @8.RepayModule.resumeOperation\\\hline
+ & & assigned in @8.RepayModule.performAction\\\hline
+ & & used in @8.RepayModule.performAction\\\hline
+ & & assigned in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.getModuleState\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=11]
+    address marketAddress;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=12]
+    address userAccountManager;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=13]
+    uint32 public contractCodeVersion;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=15]
+    mapping (uint32 => MarketInfo) marketInfo;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=16]
+    mapping (address => fraction) tokenPrices;
+\end{lstlisting}
+
+\section{Modifier Definitions}
+
+
+\subsection{Modifier onlyMarket}
+
+
+\begin{lstlisting}[firstnumber=176]
+    modifier onlyMarket() {
+        require(msg.sender == marketAddress);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyUserAccountManager}
+
+
+\begin{lstlisting}[firstnumber=181]
+    modifier onlyUserAccountManager() {
+        require(msg.sender == userAccountManager);
+        _;
+    }
+\end{lstlisting}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for RepayModule (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=20]
+    constructor(address _newOwner) public {
+        tvm.accept();
+        _owner = _newOwner;
+    }
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Function getContractAddresses}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=79]
+    function getContractAddresses() external override view responsible returns(address _owner, address _marketAddress, address _userAccountManager) {
+        return {flag: MsgFlag.REMAINING_GAS} (_owner, marketAddress, userAccountManager);
+    }
+\end{lstlisting}
+
+\subsection{Function getModuleState}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=63]
+    function getModuleState() external override view returns(mapping(uint32 => MarketInfo), mapping(address => fraction)) {
+        return(marketInfo, tokenPrices);
+    }
+\end{lstlisting}
+
+\subsection{Function performAction}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=90]
+    function performAction(uint32 marketId, TvmCell args, mapping (uint32 => MarketInfo) _marketInfo, mapping (address => fraction) _tokenPrices) external override onlyMarket {
+        tvm.rawReserve(msg.value, 2);
+        marketInfo = _marketInfo;
+        tokenPrices = _tokenPrices;
+        TvmSlice ts = args.toSlice();
+        (address tonWallet, address userTip3Wallet, uint256 tokensReceived) = ts.decode(address, address, uint256);
+        mapping(uint32 => fraction) updatedIndexes = _createUpdatedIndexes();
+
+        IUAMUserAccount(userAccountManager).requestRepayInfo{
+            flag: MsgFlag.REMAINING_GAS
+        }(tonWallet, userTip3Wallet, tokensReceived, marketId, updatedIndexes);
+    }
+\end{lstlisting}
+
+\subsection{Function repayLoan}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=109]
+    function repayLoan(
+        address tonWallet,
+        address userTip3Wallet,
+        uint256 tokensForRepay,
+        uint32 marketId,
+        BorrowInfo borrowInfo
+    ) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 0);
+        mapping(uint32 => MarketDelta) marketsDelta;
+        MarketDelta marketDelta;
+
+        uint256 tokensToRepay = borrowInfo.tokensBorrowed;
+        uint256 tokensToReturn;
+        uint256 tokenDelta;
+
+        fraction ftokensToRepay = borrowInfo.tokensBorrowed.numFMul(marketInfo[marketId].index);
+        ftokensToRepay = ftokensToRepay.fDiv(borrowInfo.index);
+        tokensToRepay = ftokensToRepay.toNum();
+
+        if (tokensToRepay <= tokensForRepay) {
+            tokensToReturn = tokensForRepay - tokensToRepay;
+            borrowInfo.tokensBorrowed = 0;
+            borrowInfo.index = marketInfo[marketId].index;
+            tokenDelta = tokensToRepay;
+        } else {
+            tokensToReturn = 0;
+            borrowInfo.tokensBorrowed = tokensToRepay - tokensForRepay;
+            borrowInfo.index = marketInfo[marketId].index;
+            tokenDelta = tokensForRepay;
+        }
+
+        marketDelta.totalBorrowed.delta = tokenDelta;
+        marketDelta.totalBorrowed.positive = false;
+        marketDelta.realTokenBalance.delta = tokenDelta;
+        marketDelta.realTokenBalance.positive = true;
+
+        marketsDelta[marketId] = marketDelta;
+
+        emit RepayBorrow(marketId, marketDelta, tonWallet, tokenDelta);
+
+        TvmBuilder tb;
+        tb.store(marketId);
+        tb.store(tonWallet);
+        tb.store(userTip3Wallet);
+        tb.store(tokensToReturn);
+        TvmBuilder borrowInfoStorage;
+        borrowInfoStorage.store(borrowInfo);
+        tb.store(borrowInfoStorage.toCell());
+
+        IContractStateCacheRoot(marketAddress).receiveCacheDelta{
+            flag: MsgFlag.REMAINING_GAS
+        }(marketsDelta, tb.toCell());
+    }
+\end{lstlisting}
+
+\subsection{Function resumeOperation}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=163]
+    function resumeOperation(TvmCell args, mapping(uint32 => MarketInfo) _marketInfo, mapping (address => fraction) _tokenPrices) external override onlyMarket {
+        tvm.rawReserve(msg.value, 2);
+        marketInfo = _marketInfo;
+        tokenPrices = _tokenPrices;
+        TvmSlice ts = args.toSlice();
+        (uint32 marketId, address tonWallet, address userTip3Wallet, uint256 tokensToReturn) = ts.decode(uint32, address, address, uint256);
+        TvmSlice borrowInfoStorage = ts.loadRefAsSlice();
+        (BorrowInfo borrowInfo) = borrowInfoStorage.decode(BorrowInfo);
+        IUAMUserAccount(userAccountManager).writeRepayInformation{
+            flag: MsgFlag.REMAINING_GAS
+        }(tonWallet, userTip3Wallet, marketId, tokensToReturn, borrowInfo);
+    }
+\end{lstlisting}
+
+\subsection{Function sendActionId}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=59]
+    function sendActionId() external override view responsible returns(uint8) {
+        return {flag: MsgFlag.REMAINING_GAS} OperationCodes.REPAY_TOKENS;
+    }
+\end{lstlisting}
+
+\subsection{Function setMarketAddress}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=67]
+    function setMarketAddress(address _marketAddress) external override canChangeParams {
+        tvm.rawReserve(msg.value, 2);
+        marketAddress = _marketAddress;
+        address(_owner).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+    }
+\end{lstlisting}
+
+\subsection{Function setUserAccountManager}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=73]
+    function setUserAccountManager(address _userAccountManager) external override canChangeParams {
+        tvm.rawReserve(msg.value, 2);
+        userAccountManager = _userAccountManager;
+        address(_owner).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+    }
+\end{lstlisting}
+
+\subsection{Function updateCache}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=83]
+    function updateCache(address tonWallet, mapping(uint32 => MarketInfo) _marketInfo, mapping(address => fraction) _tokenPrices) external override onlyMarket {
+        tvm.rawReserve(msg.value , 2);
+        marketInfo = _marketInfo;
+        tokenPrices = _tokenPrices;
+        tonWallet.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+    }
+\end{lstlisting}
+
+\subsection{Function upgradeContractCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=25]
+    function upgradeContractCode(TvmCell code, TvmCell updateParams, uint32 codeVersion) external override canUpgrade {
+        tvm.rawReserve(msg.value, 2);
+
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+
+        onCodeUpgrade (
+            _owner,
+            marketAddress,
+            userAccountManager,
+            marketInfo,
+            tokenPrices,
+            codeVersion
+        );
+    }
+\end{lstlisting}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function \_{}createUpdatedIndexes}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=103]
+    function _createUpdatedIndexes() internal view returns(mapping(uint32 => fraction) updatedIndexes) {
+        for ((uint32 marketId, MarketInfo mi): marketInfo) {
+            updatedIndexes[marketId] = mi.index;
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function onCodeUpgrade}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=41]
+    function onCodeUpgrade(
+        address owner,
+        address _marketAddress,
+        address _userAccountManager,
+        mapping(uint32 => MarketInfo) _marketInfo,
+        mapping(address => fraction) _tokenPrices,
+        uint32 _codeVersion
+    ) private {
+        tvm.accept();
+        tvm.resetStorage();
+        _owner = owner;
+        marketAddress = _marketAddress;
+        userAccountManager = _userAccountManager;
+        marketInfo = _marketInfo;
+        tokenPrices = _tokenPrices;
+        contractCodeVersion = _codeVersion;
+    }
+\end{lstlisting}
+\paragraph{Some functions inherited by using}

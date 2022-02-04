@@ -1,0 +1,245 @@
+
+\chapter{Abstract Contract IRoles}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt IRoles.sol}
+
+\section{Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+address & \_{}owner &  \\\hline
+ & & used in @15.WalletController.upgradeContractCode\\\hline
+ & & assigned in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.onCodeUpgrade\\\hline
+ & & assigned in @15.WalletController.:constructor\\\hline
+ & & used in @15.WalletController.:constructor\\\hline
+ & & used in @14.UserAccountManager.upgradeContractCode\\\hline
+ & & assigned in @14.UserAccountManager.onCodeUpgrade\\\hline
+ & & used in @14.UserAccountManager.onCodeUpgrade\\\hline
+ & & assigned in @14.UserAccountManager.:constructor\\\hline
+ & & used in @14.UserAccountManager.:constructor\\\hline
+ & & used in @11.Oracle.upgradeContractCode\\\hline
+ & & assigned in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.getDetails\\\hline
+ & & assigned in @11.Oracle.:constructor\\\hline
+ & & used in @11.Oracle.:constructor\\\hline
+ & & used in @10.WithdrawModule.upgradeContractCode\\\hline
+ & & used in @10.WithdrawModule.setUserAccountManager\\\hline
+ & & used in @10.WithdrawModule.setMarketAddress\\\hline
+ & & assigned in @10.WithdrawModule.onCodeUpgrade\\\hline
+ & & used in @10.WithdrawModule.onCodeUpgrade\\\hline
+ & & assigned in @10.WithdrawModule.:constructor\\\hline
+ & & used in @10.WithdrawModule.:constructor\\\hline
+ & & used in @9.SupplyModule.upgradeContractCode\\\hline
+ & & used in @9.SupplyModule.setUserAccountManager\\\hline
+ & & used in @9.SupplyModule.setMarketAddress\\\hline
+ & & assigned in @9.SupplyModule.onCodeUpgrade\\\hline
+ & & used in @9.SupplyModule.onCodeUpgrade\\\hline
+ & & assigned in @9.SupplyModule.:constructor\\\hline
+ & & used in @9.SupplyModule.:constructor\\\hline
+ & & used in @8.RepayModule.upgradeContractCode\\\hline
+ & & used in @8.RepayModule.setUserAccountManager\\\hline
+ & & used in @8.RepayModule.setMarketAddress\\\hline
+ & & assigned in @8.RepayModule.onCodeUpgrade\\\hline
+ & & used in @8.RepayModule.onCodeUpgrade\\\hline
+ & & assigned in @8.RepayModule.:constructor\\\hline
+ & & used in @8.RepayModule.:constructor\\\hline
+ & & used in @7.LiquidationModule.upgradeContractCode\\\hline
+ & & used in @7.LiquidationModule.setUserAccountManager\\\hline
+ & & used in @7.LiquidationModule.setMarketAddress\\\hline
+ & & assigned in @7.LiquidationModule.onCodeUpgrade\\\hline
+ & & used in @7.LiquidationModule.onCodeUpgrade\\\hline
+ & & assigned in @7.LiquidationModule.:constructor\\\hline
+ & & used in @7.LiquidationModule.:constructor\\\hline
+ & & used in @6.BorrowModule.upgradeContractCode\\\hline
+ & & used in @6.BorrowModule.setUserAccountManager\\\hline
+ & & used in @6.BorrowModule.setMarketAddress\\\hline
+ & & assigned in @6.BorrowModule.onCodeUpgrade\\\hline
+ & & used in @6.BorrowModule.onCodeUpgrade\\\hline
+ & & assigned in @6.BorrowModule.:constructor\\\hline
+ & & used in @6.BorrowModule.:constructor\\\hline
+ & & used in @2.MarketAggregator.withdrawExtraTons\\\hline
+ & & used in @2.MarketAggregator.upgradeContractCode\\\hline
+ & & used in @2.MarketAggregator.updateModulesCache\\\hline
+ & & used in @2.MarketAggregator.updateMarketParameters\\\hline
+ & & used in @2.MarketAggregator.removeModule\\\hline
+ & & used in @2.MarketAggregator.removeMarket\\\hline
+ & & used in @2.MarketAggregator.performOperation\\\hline
+ & & assigned in @2.MarketAggregator.onCodeUpgrade\\\hline
+ & & used in @2.MarketAggregator.onCodeUpgrade\\\hline
+ & & used in @2.MarketAggregator.addModule\\\hline
+ & & assigned in @2.MarketAggregator.:constructor\\\hline
+ & & used in @2.MarketAggregator.:constructor\\\hline
+ & & used in @32.IRoles.getOwner\\\hline
+ & & assigned in @32.IRoles.changeOwner\\\hline
+ & & used in @32.IRoles.changeOwner\\\hline
+mapping (address =$>$ bool) & \_{}canUpgrade &  \\\hline
+ & & assigned in @32.IRoles.setUpgrader\\\hline
+ & & used in @32.IRoles.setUpgrader\\\hline
+ & & used in @32.IRoles.getUpgraders\\\hline
+mapping (address =$>$ bool) & \_{}canChangeParams &  \\\hline
+ & & assigned in @32.IRoles.setParamChanger\\\hline
+ & & used in @32.IRoles.setParamChanger\\\hline
+ & & used in @32.IRoles.getParamChangers\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=13]
+    address _owner;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=14]
+    mapping(address => bool) _canUpgrade;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=15]
+    mapping(address => bool) _canChangeParams;
+\end{lstlisting}
+
+\section{Modifier Definitions}
+
+
+\subsection{Modifier onlyOwner}
+
+
+\begin{lstlisting}[firstnumber=62]
+    modifier onlyOwner() {
+        require(
+            msg.sender == _owner,
+            RolesErrors.IS_NOT_OWNER
+        );
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier canUpgrade}
+
+
+\begin{lstlisting}[firstnumber=70]
+    modifier canUpgrade() {
+        require(
+            _canUpgrade[msg.sender] ||
+            msg.sender == _owner,
+            RolesErrors.CANNOT_UPGRADE
+        );
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier canChangeParams}
+
+
+\begin{lstlisting}[firstnumber=79]
+    modifier canChangeParams() {
+        require(
+            _canChangeParams[msg.sender] ||
+            msg.sender == _owner,
+            RolesErrors.CANNOT_CHANGE_PARAMS
+        );
+        _;
+    }
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Function changeOwner}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=39]
+    function changeOwner(address _newOwner) external onlyOwner {
+        tvm.rawReserve(msg.value, 2);
+
+        _owner = _newOwner;
+
+        address(msg.sender).transfer({
+            value: 0,
+            flag: MsgFlag.REMAINING_GAS
+        });
+    }
+\end{lstlisting}
+
+\subsection{Function getOwner}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=50]
+    function getOwner() external view returns(address) {
+        return _owner;
+    }
+\end{lstlisting}
+
+\subsection{Function getParamChangers}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=58]
+    function getParamChangers() external view returns(mapping(address => bool)) {
+        return _canChangeParams;
+    }
+\end{lstlisting}
+
+\subsection{Function getUpgraders}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=54]
+    function getUpgraders() external view returns(mapping(address => bool)) {
+        return _canUpgrade;
+    }
+\end{lstlisting}
+
+\subsection{Function setParamChanger}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=28]
+    function setParamChanger(address paramChanger, bool allowed) external onlyOwner {
+        tvm.rawReserve(msg.value, 2);
+
+        _canChangeParams[paramChanger] = allowed;
+
+        address(msg.sender).transfer({
+            value: 0,
+            flag: MsgFlag.REMAINING_GAS
+        });
+    }
+\end{lstlisting}
+
+\subsection{Function setUpgrader}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=17]
+    function setUpgrader(address upgrader, bool allowed) external onlyOwner {
+        tvm.rawReserve(msg.value, 2);
+
+        _canUpgrade[upgrader] = allowed;
+
+        address(msg.sender).transfer({
+            value: 0,
+            flag: MsgFlag.REMAINING_GAS
+        });
+    }
+\end{lstlisting}

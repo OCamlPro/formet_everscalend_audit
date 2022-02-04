@@ -1,0 +1,561 @@
+
+\chapter{Contract WalletController}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt WalletController.sol}
+
+\section{Contract Inheritance}
+
+
+\noindent\begin{tabular}{|l|p{5cm}|}\hline
+IRoles & \\\hline
+IWCMInteractions & \\\hline
+IWalletControllerMarketManagement & \\\hline
+IWalletControllerGetters & \\\hline
+IUpgradableContract & \\\hline
+ITokensReceivedCallback & \\\hline
+\end{tabular}
+
+
+\section{Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+uint32 & contractCodeVersion &  \\\hline
+ & & assigned in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.onCodeUpgrade\\\hline
+address & marketAddress &  \\\hline
+ & & used in @15.WalletController.upgradeContractCode\\\hline
+ & & used in @15.WalletController.tokensReceivedCallback\\\hline
+ & & used in @15.WalletController.tokensReceivedCallback\\\hline
+ & & used in @15.WalletController.tokensReceivedCallback\\\hline
+ & & assigned in @15.WalletController.setMarketAddress\\\hline
+ & & used in @15.WalletController.setMarketAddress\\\hline
+ & & assigned in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.onCodeUpgrade\\\hline
+mapping (address =$>$ address) & wallets &  \\\hline
+ & & used in @15.WalletController.upgradeContractCode\\\hline
+ & & assigned in @15.WalletController.removeMarket\\\hline
+ & & used in @15.WalletController.removeMarket\\\hline
+ & & assigned in @15.WalletController.receiveTIP3WalletAddress\\\hline
+ & & used in @15.WalletController.receiveTIP3WalletAddress\\\hline
+ & & assigned in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.getWallets\\\hline
+ & & assigned in @15.WalletController.addMarket\\\hline
+ & & used in @15.WalletController.addMarket\\\hline
+ & & used in @15.WalletController.\_{}transferTokensToWallet\\\hline
+mapping (address =$>$ bool) & realTokenRoots &  \\\hline
+ & & used in @15.WalletController.upgradeContractCode\\\hline
+ & & assigned in @15.WalletController.removeMarket\\\hline
+ & & used in @15.WalletController.removeMarket\\\hline
+ & & assigned in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.getRealTokenRoots\\\hline
+ & & assigned in @15.WalletController.addMarket\\\hline
+ & & used in @15.WalletController.addMarket\\\hline
+mapping (address =$>$ bool) & vTokenRoots &  \\\hline
+ & & used in @15.WalletController.upgradeContractCode\\\hline
+ & & assigned in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.onCodeUpgrade\\\hline
+mapping (address =$>$ uint32) & tokensToMarkets &  \\\hline
+ & & assigned in @15.WalletController.removeMarket\\\hline
+ & & used in @15.WalletController.removeMarket\\\hline
+ & & used in @15.WalletController.receiveTIP3WalletAddress\\\hline
+ & & assigned in @15.WalletController.addMarket\\\hline
+ & & used in @15.WalletController.addMarket\\\hline
+mapping (uint32 =$>$ MarketTokenAddresses) & marketTIP3Info &  \\\hline
+ & & used in @15.WalletController.upgradeContractCode\\\hline
+ & & assigned in @15.WalletController.removeMarket\\\hline
+ & & used in @15.WalletController.removeMarket\\\hline
+ & & used in @15.WalletController.removeMarket\\\hline
+ & & assigned in @15.WalletController.receiveTIP3WalletAddress\\\hline
+ & & used in @15.WalletController.receiveTIP3WalletAddress\\\hline
+ & & assigned in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.onCodeUpgrade\\\hline
+ & & used in @15.WalletController.getMarketAddresses\\\hline
+ & & used in @15.WalletController.getAllMarkets\\\hline
+ & & assigned in @15.WalletController.addMarket\\\hline
+ & & used in @15.WalletController.addMarket\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=29]
+    uint32 public contractCodeVersion;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=31]
+    address public marketAddress;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=34]
+    mapping (address => address) public wallets;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=35]
+    mapping (address => bool) public realTokenRoots;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=36]
+    mapping (address => bool) public vTokenRoots;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=37]
+    mapping (address => uint32) public tokensToMarkets;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=39]
+    mapping (uint32 => MarketTokenAddresses) public marketTIP3Info;
+\end{lstlisting}
+
+\section{Modifier Definitions}
+
+
+\subsection{Modifier onlyMarket}
+
+
+\begin{lstlisting}[firstnumber=295]
+    modifier onlyMarket() {
+        require(msg.sender == marketAddress, WalletControllerErrorCodes.ERROR_MSG_SENDER_IS_NOT_MARKET);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyTrusted}
+
+
+\begin{lstlisting}[firstnumber=300]
+    modifier onlyTrusted() {
+        require(
+            (msg.sender == marketAddress)
+        );
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyOwnWallet}
+
+
+\begin{lstlisting}[firstnumber=311]
+    modifier onlyOwnWallet(address tokenRoot, address tokenWallet) {
+        require(wallets[tokenRoot] == tokenWallet, WalletControllerErrorCodes.ERROR_MSG_SENDER_IS_NOT_OWN_WALLET);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyExisingTIP3Root}
+
+
+\begin{lstlisting}[firstnumber=319]
+    modifier onlyExisingTIP3Root(address rootAddress) {
+        require(wallets.exists(rootAddress), WalletControllerErrorCodes.ERROR_TIP3_ROOT_IS_UNKNOWN);
+        _;
+    }
+\end{lstlisting}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for WalletController (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=43]
+    constructor(address _newOwner) public { 
+        tvm.accept();
+        _owner = _newOwner;
+     } // Contract will be deployed using platform
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Function addMarket}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=123]
+    function addMarket(uint32 marketId, address realTokenRoot) external override canChangeParams {
+        tvm.accept();
+        marketTIP3Info[marketId] = MarketTokenAddresses({
+            realToken: realTokenRoot,
+            realTokenWallet: address.makeAddrStd(0, 0)
+        });
+
+        realTokenRoots[realTokenRoot] = true;
+
+        wallets[realTokenRoot] = address.makeAddrStd(0, 1);
+
+        tokensToMarkets[realTokenRoot] = marketId;
+
+        addWallet(realTokenRoot);
+    }
+\end{lstlisting}
+
+\subsection{Function createLiquidationPayload}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=345]
+    function createLiquidationPayload(address targetUser, uint32 marketId) external override pure returns(TvmCell) {
+        TvmBuilder tb;
+        tb.store(OperationCodes.LIQUIDATE_TOKENS);
+        TvmBuilder op;
+        op.store(targetUser);
+        op.store(marketId);
+        tb.store(op.toCell());
+
+        return tb.toCell();
+    }
+\end{lstlisting}
+
+\subsection{Function createRepayPayload}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=336]
+    function createRepayPayload() external override pure returns(TvmCell) {
+        TvmBuilder tb;
+        tb.store(OperationCodes.REPAY_TOKENS);
+        TvmBuilder op;
+        tb.store(op.toCell());
+
+        return tb.toCell();
+    }
+\end{lstlisting}
+
+\subsection{Function createSupplyPayload}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=327]
+    function createSupplyPayload() external override pure returns(TvmCell) {
+        TvmBuilder tb;
+        tb.store(OperationCodes.SUPPLY_TOKENS);
+        TvmBuilder op;
+        tb.store(op.toCell());
+
+        return tb.toCell();
+    }
+\end{lstlisting}
+
+\subsection{Function getAllMarkets}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=288]
+    function getAllMarkets() external override view responsible returns(mapping(uint32 => MarketTokenAddresses)) {
+        return {flag: MsgFlag.REMAINING_GAS} marketTIP3Info;
+    }
+\end{lstlisting}
+
+\subsection{Function getMarketAddresses}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=284]
+    function getMarketAddresses(uint32 marketId) external override view responsible returns(MarketTokenAddresses) {
+        return {flag: MsgFlag.REMAINING_GAS} marketTIP3Info[marketId];
+    }
+\end{lstlisting}
+
+\subsection{Function getRealTokenRoots}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=276]
+    function getRealTokenRoots() external override view responsible returns(mapping(address => bool)) {
+        return {flag: MsgFlag.REMAINING_GAS} realTokenRoots;
+    }
+\end{lstlisting}
+
+\subsection{Function getWallets}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=280]
+    function getWallets() external override view responsible returns(mapping(address => address)) {
+        return {flag: MsgFlag.REMAINING_GAS} wallets;
+    }
+\end{lstlisting}
+
+\subsection{Function receiveTIP3WalletAddress}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=197]
+    function receiveTIP3WalletAddress(address _wallet) external onlyExisingTIP3Root(msg.sender) {
+        tvm.accept();
+
+        wallets[msg.sender] = _wallet;
+        uint32 marketId = tokensToMarkets[msg.sender];
+        marketTIP3Info[marketId].realTokenWallet = _wallet;
+        this.setReceiveCallback(_wallet);
+    }
+\end{lstlisting}
+
+\subsection{Function removeMarket}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=142]
+    function removeMarket(uint32 marketId) external override canChangeParams {
+        tvm.accept();
+        MarketTokenAddresses marketTokenAddresses = marketTIP3Info[marketId];
+
+        delete wallets[marketTokenAddresses.realToken];
+        delete realTokenRoots[marketTokenAddresses.realToken];
+        delete tokensToMarkets[marketTokenAddresses.realToken];
+        delete marketTIP3Info[marketId];
+    }
+\end{lstlisting}
+
+\subsection{Function setMarketAddress}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=116]
+    function setMarketAddress(address _market) external override canChangeParams {
+        tvm.rawReserve(msg.value, 2);
+        marketAddress = _market;
+
+        address(msg.sender).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+    }
+\end{lstlisting}
+
+\subsection{Function setReceiveCallback}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=206]
+    function setReceiveCallback(address _wallet) external {
+        require(msg.sender == address(this));
+        tvm.accept();
+
+        ITONTokenWallet(_wallet).setReceiveCallback{
+            value: WCCostConstants.SET_RECEIVE_CALLBACK
+        }(
+            address(this),
+            true
+        );
+    }
+\end{lstlisting}
+
+\subsection{Function tokensReceivedCallback}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=218]
+    function tokensReceivedCallback(
+        address token_wallet,
+        address token_root,
+        uint128 amount,
+        uint256, // sender_public_key,
+        address sender_address,
+        address sender_wallet,
+        address, // original_gas_to,
+        uint128, // updated_balance,
+        TvmCell payload
+    ) external override onlyOwnWallet(token_root, msg.sender) 
+    {
+        tvm.rawReserve(msg.value, 2);
+            TvmSlice ts = payload.toSlice();
+        if (
+            ts.bits() == 8 &&
+            ts.refs() == 1
+        ) {
+            uint8 operation = ts.decode(uint8);
+            TvmSlice args = ts.loadRefAsSlice();
+            if (operation == OperationCodes.SUPPLY_TOKENS) {
+                TvmBuilder tb;
+                tb.store(sender_address);
+                tb.store(uint256(amount));
+                MarketAggregator(marketAddress).performOperationWalletController{
+                    flag: MsgFlag.REMAINING_GAS
+                }(operation, token_root, tb.toCell());
+            } else if (operation == OperationCodes.REPAY_TOKENS) {
+                TvmBuilder tb;
+                tb.store(sender_address);
+                tb.store(sender_wallet);
+                tb.store(uint256(amount));
+                MarketAggregator(marketAddress).performOperationWalletController{
+                    flag: MsgFlag.REMAINING_GAS
+                }(operation, token_root, tb.toCell());
+            } else if (operation == OperationCodes.LIQUIDATE_TOKENS) {
+                (address targetUser, uint32 marketToLiquidate) = args.decode(address, uint32);
+                TvmBuilder tb;
+                TvmBuilder amountStorage;
+                tb.store(sender_address);
+                tb.store(targetUser);
+                tb.store(sender_wallet);
+                amountStorage.store(marketToLiquidate);
+                amountStorage.store(uint256(amount));
+                tb.store(amountStorage.toCell());
+                MarketAggregator(marketAddress).performOperationWalletController{
+                    flag: MsgFlag.REMAINING_GAS
+                }(operation, token_root, tb.toCell());
+            } else {
+                _transferTokensToWallet(sender_address, token_root, sender_wallet, amount, payload);
+            }
+        } else {
+            _transferTokensToWallet(sender_address, token_root, sender_wallet, amount, payload);
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function transferTokensToWallet}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=152]
+    function transferTokensToWallet(address tonWallet, address tokenRoot, address userTip3Wallet, uint256 toPayout) external override view onlyTrusted {
+        TvmCell empty;
+        _transferTokensToWallet(tonWallet, tokenRoot, userTip3Wallet, uint128(toPayout), empty);
+    }
+\end{lstlisting}
+
+\subsection{Function upgradeContractCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=64]
+    function upgradeContractCode(TvmCell code, TvmCell updateParams, uint32 codeVersion) override external canUpgrade {
+        tvm.accept();
+
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        
+        onCodeUpgrade(
+            _owner,
+            marketAddress,
+            wallets,
+            realTokenRoots,
+            vTokenRoots,
+            marketTIP3Info,
+            updateParams,
+            codeVersion
+        );
+    }
+\end{lstlisting}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function \_{}transferTokensToWallet}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=157]
+    function _transferTokensToWallet(address tonWallet, address tokenRoot, address userTip3Wallet, uint128 toTransfer, TvmCell payload) internal view {
+        ITONTokenWallet(wallets[tokenRoot]).transfer{
+            flag: MsgFlag.REMAINING_GAS
+        }(
+            userTip3Wallet,
+            toTransfer,
+            0,
+            tonWallet,
+            true,
+            payload
+        );
+    }
+\end{lstlisting}
+
+\subsection{Function addWallet}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=175]
+    function addWallet(address tokenRoot) private pure {
+        IRootTokenContract(tokenRoot).deployEmptyWallet{
+            value: WCCostConstants.WALLET_DEPLOY_COST
+        }(
+            WCCostConstants.WALLET_DEPLOY_GRAMS,
+            0,
+            address(this),
+            address(this)
+        );
+
+        IRootTokenContract(tokenRoot).getWalletAddress{
+            value: WCCostConstants.GET_WALLET_ADDRESS,
+            callback: this.receiveTIP3WalletAddress
+        }(
+            0,
+            address(this)
+        );
+    }
+\end{lstlisting}
+
+\subsection{Function onCodeUpgrade}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=93]
+    function onCodeUpgrade(
+        address owner, 
+        address _marketAddress, 
+        mapping(address => address) _wallets, 
+        mapping(address => bool) _realTokensRoots, 
+        mapping(address => bool) _vTokenRoots, 
+        mapping(uint32 => MarketTokenAddresses) _marketTIP3Info, 
+        TvmCell, 
+        uint32 _codeVersion
+    ) private {
+        tvm.accept();
+        tvm.resetStorage();
+        _owner = owner;
+        marketAddress = _marketAddress;
+        wallets = _wallets;
+        realTokenRoots = _realTokensRoots;
+        vTokenRoots = _vTokenRoots;
+        marketTIP3Info = _marketTIP3Info;
+        contractCodeVersion = _codeVersion;
+    }
+\end{lstlisting}

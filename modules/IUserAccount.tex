@@ -1,0 +1,72 @@
+
+\section{Module "IUserAccount.sol"}
+
+
+\subsection{Pragmas}
+
+
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+ton & -solidity $>$= 0.43.0 &\\\hline
+\end{tabular}
+
+
+\subsection{Imports}
+
+
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+../../utils/libraries/FloatingPointOperations.sol &\\\hline
+\end{tabular}
+
+
+\subsection{Type Definitions}
+
+
+\subsubsection{Struct BorrowInfo}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{6cm}|}\hline
+tokensBorrowed & uint256 & \\\hline
+index & fraction & \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=5]
+struct BorrowInfo {
+    uint256 tokensBorrowed;
+    fraction index;
+}
+\end{lstlisting}
+
+\subsubsection{Struct UserMarketInfo}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{6cm}|}\hline
+exists & bool & \\\hline
+\_{}marketId & uint32 & \\\hline
+suppliedTokens & uint256 & \\\hline
+accountHealth & fraction & \\\hline
+borrowInfo & BorrowInfo & \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=10]
+struct UserMarketInfo {
+    bool exists;
+    uint32 _marketId;
+    uint256 suppliedTokens;
+    fraction accountHealth;
+    BorrowInfo borrowInfo;
+}
+\end{lstlisting}
+
+\subsection{Contract Definitions}
+
+\begin{itemize}
+\item IUserAccount
+\item IUserAccountData
+\item IUserAccountGetters
+\end{itemize}

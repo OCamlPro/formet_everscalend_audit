@@ -1,0 +1,104 @@
+
+\section{Module "MarketInfo.sol"}
+
+
+\subsection{Pragmas}
+
+
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+ton & -solidity $>$= 0.39.0 &\\\hline
+\end{tabular}
+
+
+\subsection{Imports}
+
+
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+../utils/libraries/FloatingPointOperations.sol &\\\hline
+\end{tabular}
+
+
+\subsection{Type Definitions}
+
+
+\subsubsection{Struct DeltaInfo}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{6cm}|}\hline
+positive & bool & \\\hline
+delta & uint256 & \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=5]
+struct DeltaInfo {
+    bool positive;
+    uint256 delta;
+}
+\end{lstlisting}
+
+\subsubsection{Struct MarketInfo}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{6cm}|}\hline
+token & address & \\\hline
+realTokenBalance & uint256 & \\\hline
+vTokenBalance & uint256 & \\\hline
+totalBorrowed & uint256 & \\\hline
+totalReserve & uint256 & \\\hline
+index & fraction & \\\hline
+baseRate & fraction & \\\hline
+utilizationMultiplier & fraction & \\\hline
+reserveFactor & fraction & \\\hline
+exchangeRate & fraction & \\\hline
+collateralFactor & fraction & \\\hline
+liquidationMultiplier & fraction & \\\hline
+lastUpdateTime & uint256 & \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=10]
+struct MarketInfo {
+    address token;
+    uint256 realTokenBalance;
+    uint256 vTokenBalance;
+    uint256 totalBorrowed;
+    uint256 totalReserve;
+
+    fraction index;
+    fraction baseRate;
+    fraction utilizationMultiplier;
+    fraction reserveFactor;
+    fraction exchangeRate;
+    fraction collateralFactor;
+    fraction liquidationMultiplier;
+
+    uint256 lastUpdateTime;
+}
+\end{lstlisting}
+
+\subsubsection{Struct MarketDelta}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{6cm}|}\hline
+realTokenBalance & DeltaInfo & \\\hline
+vTokenBalance & DeltaInfo & \\\hline
+totalBorrowed & DeltaInfo & \\\hline
+totalReserve & DeltaInfo & \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=28]
+struct MarketDelta {
+    DeltaInfo realTokenBalance;
+    DeltaInfo vTokenBalance;
+    DeltaInfo totalBorrowed;
+    DeltaInfo totalReserve;
+}
+\end{lstlisting}

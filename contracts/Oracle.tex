@@ -1,0 +1,332 @@
+
+\chapter{Contract Oracle}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt Oracle.sol}
+
+\section{Contract Inheritance}
+
+
+\noindent\begin{tabular}{|l|p{5cm}|}\hline
+IRoles & \\\hline
+IOracleService & \\\hline
+IOracleUpdatePrices & \\\hline
+IOracleReturnPrices & \\\hline
+IOracleManageTokens & \\\hline
+IUpgradableContract & \\\hline
+\end{tabular}
+
+
+\section{Static Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+uint256 & nonce &  \\\hline
+ & & used in @11.Oracle.upgradeContractCode\\\hline
+ & & assigned in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.onCodeUpgrade\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=22]
+    uint256 static nonce;
+\end{lstlisting}
+
+\section{Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+mapping (address =$>$ MarketPriceInfo) & prices &  \\\hline
+ & & used in @11.Oracle.upgradeContractCode\\\hline
+ & & assigned in @11.Oracle.removeToken\\\hline
+ & & used in @11.Oracle.removeToken\\\hline
+ & & used in @11.Oracle.removeToken\\\hline
+ & & assigned in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.internalUpdatePrice\\\hline
+ & & assigned in @11.Oracle.internalGetUpdatedPrice\\\hline
+ & & used in @11.Oracle.internalGetUpdatedPrice\\\hline
+ & & used in @11.Oracle.internalGetUpdatedPrice\\\hline
+ & & assigned in @11.Oracle.internalGetUpdatedPrice\\\hline
+ & & used in @11.Oracle.internalGetUpdatedPrice\\\hline
+ & & used in @11.Oracle.internalGetUpdatedPrice\\\hline
+ & & used in @11.Oracle.getTokenPrice\\\hline
+ & & used in @11.Oracle.getTokenPrice\\\hline
+ & & used in @11.Oracle.getAllTokenPrices\\\hline
+ & & assigned in @11.Oracle.externalUpdatePrice\\\hline
+ & & used in @11.Oracle.externalUpdatePrice\\\hline
+ & & assigned in @11.Oracle.externalUpdatePrice\\\hline
+ & & used in @11.Oracle.externalUpdatePrice\\\hline
+ & & assigned in @11.Oracle.addToken\\\hline
+ & & used in @11.Oracle.addToken\\\hline
+mapping (address =$>$ address) & swapPairToTokenRoot &  \\\hline
+ & & used in @11.Oracle.upgradeContractCode\\\hline
+ & & assigned in @11.Oracle.removeToken\\\hline
+ & & used in @11.Oracle.removeToken\\\hline
+ & & assigned in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.internalGetUpdatedPrice\\\hline
+ & & assigned in @11.Oracle.addToken\\\hline
+ & & used in @11.Oracle.addToken\\\hline
+uint32 & contractCodeVersion &  \\\hline
+ & & assigned in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.onCodeUpgrade\\\hline
+ & & used in @11.Oracle.getVersion\\\hline
+ & & used in @11.Oracle.getDetails\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=26]
+    mapping(address => MarketPriceInfo) prices;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=28]
+    mapping(address => address) swapPairToTokenRoot;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=31]
+    uint32 contractCodeVersion;
+\end{lstlisting}
+
+\section{Modifier Definitions}
+
+
+\subsection{Modifier onlyTrustedSwapPair}
+
+
+\begin{lstlisting}[firstnumber=198]
+    modifier onlyTrustedSwapPair() {
+        require(swapPairToTokenRoot.exists(msg.sender), OracleErrorCodes.ERROR_NOT_KNOWN_SWAP_PAIR);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyKnownTokenRoot}
+
+
+\begin{lstlisting}[firstnumber=203]
+    modifier onlyKnownTokenRoot(address _tokenRoot) {
+        require(prices.exists(_tokenRoot), OracleErrorCodes.ERROR_NOT_KNOWN_TOKEN_ROOT);
+        _;
+    }
+\end{lstlisting}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for Oracle (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=36]
+    constructor(address _newOwner) public {
+        tvm.accept();
+        _owner = _newOwner;
+    }
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Function addToken}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=179]
+    function addToken(address tokenRoot, address swapPairAddress, bool isLeft) override external canChangeParams {
+        tvm.accept();
+        swapPairToTokenRoot[swapPairAddress] = tokenRoot;
+        prices[tokenRoot] = MarketPriceInfo(swapPairAddress, isLeft, 0, 0);
+        this.internalUpdatePrice{value: CostConstants.TOKEN_INITIAL_UPDATE_PRICE, bounce: false}(tokenRoot);
+    }
+\end{lstlisting}
+
+\subsection{Function externalUpdatePrice}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=117]
+    function externalUpdatePrice(address tokenRoot, uint128 tokens, uint128 usd) override external canChangeParams onlyKnownTokenRoot(tokenRoot) {
+        if (msg.sender.value == 0) {
+            tvm.accept();
+        } else {
+            tvm.rawReserve(msg.value, 2);
+        }
+
+        prices[tokenRoot].tokens = tokens;
+        prices[tokenRoot].usd = usd;
+
+        address(msg.sender).transfer({value: 0, flag: 64});
+    }
+\end{lstlisting}
+
+\subsection{Function getAllTokenPrices}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=167]
+    function getAllTokenPrices(TvmCell payload) override external responsible view returns (mapping(address => MarketPriceInfo), TvmCell) {
+        tvm.rawReserve(msg.value, 2);
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } (prices, payload);
+    }
+\end{lstlisting}
+
+\subsection{Function getDetails}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=104]
+    function getDetails() override external responsible view returns (OracleServiceInformation) {
+        tvm.rawReserve(msg.value, 2);
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } OracleServiceInformation(contractCodeVersion, _owner);
+    }
+\end{lstlisting}
+
+\subsection{Function getTokenPrice}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=159]
+    function getTokenPrice(address tokenRoot, TvmCell payload) override external responsible view returns(address, uint128, uint128, TvmCell) {
+        tvm.rawReserve(msg.value, 2);
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } (tokenRoot, prices[tokenRoot].tokens, prices[tokenRoot].usd, payload);
+    }
+\end{lstlisting}
+
+\subsection{Function getVersion}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=99]
+    function getVersion() override external responsible view returns (uint32) { 
+        tvm.rawReserve(msg.value, 2);
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } contractCodeVersion;
+    }
+\end{lstlisting}
+
+\subsection{Function internalGetUpdatedPrice}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=146]
+    function internalGetUpdatedPrice(IDexPairBalances updatedPrice) override external onlyTrustedSwapPair {
+        tvm.rawReserve(msg.value, 2);
+        address affectedToken = swapPairToTokenRoot[msg.sender];
+        prices[affectedToken].tokens = prices[affectedToken].isLeft ? updatedPrice.left_balance : updatedPrice.right_balance;
+        prices[affectedToken].usd = prices[affectedToken].isLeft ? updatedPrice.right_balance : updatedPrice.left_balance;
+    }
+\end{lstlisting}
+
+\subsection{Function internalUpdatePrice}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=133]
+    function internalUpdatePrice(address tokenRoot) override external onlyKnownTokenRoot(tokenRoot) {
+        tvm.rawReserve(msg.value, 2);
+        IDexPair(prices[tokenRoot].swapPair).getBalances{
+            value: 0, 
+            bounce: true, 
+            flag: MsgFlag.REMAINING_GAS,
+            callback: this.internalGetUpdatedPrice
+        }();
+    }
+\end{lstlisting}
+
+\subsection{Function removeToken}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=189]
+    function removeToken(address tokenRoot) override external canChangeParams {
+        tvm.accept();
+        delete swapPairToTokenRoot[prices[tokenRoot].swapPair];
+        delete prices[tokenRoot];
+    }
+\end{lstlisting}
+
+\subsection{Function upgradeContractCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=62]
+    function upgradeContractCode(TvmCell code, TvmCell updateParams, uint32 codeVersion) override external canUpgrade {
+        tvm.accept();
+
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+
+        onCodeUpgrade(
+            nonce,
+            prices,
+            swapPairToTokenRoot,
+            0,
+            _owner,
+            updateParams,
+            codeVersion
+        );
+    }
+\end{lstlisting}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function onCodeUpgrade}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=79]
+    function onCodeUpgrade(
+        uint256 _nonce,
+        mapping(address => MarketPriceInfo) _prices,
+        mapping(address => address) _swapPairToTokenRoot,
+        uint256,
+        address _ownerAddress,
+        TvmCell,
+        uint32 _codeVersion
+    ) private {
+        tvm.accept();
+        tvm.resetStorage();
+        nonce = _nonce;
+        prices = _prices;
+        swapPairToTokenRoot = _swapPairToTokenRoot;
+        _owner = _ownerAddress;
+        contractCodeVersion = _codeVersion;
+    }
+\end{lstlisting}

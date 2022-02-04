@@ -1,0 +1,127 @@
+\documentclass{report}
+
+\usepackage{fancyhdr}
+\usepackage{minitoc}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{titletoc}
+\usepackage[table]{xcolor}
+\renewcommand{\listfigurename}{Table of all Found Issues}
+\input{highlighter}
+
+\newif\ifsolmodules
+\newif\ifsoltables
+\newif\ifsolissues
+\newif\ifsoldraft
+
+\soldrafttrue
+%\soldraftfalse
+
+%\solmodulestrue
+\solmodulesfalse
+
+\soltablestrue
+%\soltablesfalse
+
+\solissuestrue
+%\solissuesfalse
+
+
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\newcommand\addcomment[3]{
+  \addcontentsline{lof}{section}{#1}
+  \noindent\begin{tabular}{|p{12cm}| }\hline
+   \rowcolor{#2}{#1}\\
+   {#3}\\\hline
+  \end{tabular}
+}
+
+\newcommand\issueCritical[2]{\addcomment{\bf Critical issue: #1}{red}{#2}}
+\newcommand\issueMajor[2]{\addcomment{\bf Major issue: #1}{pink}{#2}}
+\newcommand\issueMinor[2]{\addcomment{\bf Minor issue: #1}{cyan}{#2}}
+
+\ifsoldraft
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkText{Confidential}
+\SetWatermarkScale{5}
+\fi
+
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[RO,RE]{\leftmark}
+\fancyhead[LO,LE]{\thepage}
+\fancyfoot{}
+\fancyfoot[RO,RE]{\thepage}
+\fancyfoot[LO,LE]{\leftmark}
+
+\begin{document}
+
+\title{Audit}
+\author{By OCamlPro}
+\maketitle
+\dominitoc
+\ifsolissues
+\listoffigures
+\fi
+\tableofcontents
+
+\ifsoldraft
+\chapter{Only for Auditors}
+
+\section{To edit this documents}
+
+In the report.tex file, choose:
+\begin{itemize}
+\item{\bf \textbackslash{}soldraftfalse} to remove draft mode (watermarks, advises)
+\item{\bf \textbackslash{}solmodulestrue} to display modules by chapter instead of contracts
+\item{\bf \textbackslash{}soltablestrue} to display tables for parameters and returns
+\item{\bf \textbackslash{}solissuesfalse} to remove the table of issues
+\end{itemize}
+
+Issues can be entered with:
+\begin{itemize}
+\item{\bf \textbackslash{}issueCritical\{title\}\{text\}}
+\item{\bf \textbackslash{}issueMajor\{title\}\{text\}}
+\item{\bf \textbackslash{}issueMinor\{title\}\{text\}}
+\end{itemize}
+
+\section{General Auditing Rules}
+
+\begin{itemize}
+\item Check that types have the correct integer types (Pubkey : uint256, \
+   Amount: uint128, Time: uint64 ).
+\item Naming conventions: constants should for example be all uppercase, static variables should start with a prefix like \verb+s_+, globals should start with a prefix like \verb+g_+ or \verb+m_+, internal functions should start with a prefix \verb+_+.
+\item Numbers should not appear in source, but be defined as constants.
+\item In constant definitions, verify that 2 consecutive errors have not the same error (common copy-paste error)
+\item Constants for amounts should be expressed in \verb+ton+ to prevent too many zeroes.
+\item Modifiers with {\tt tvm.accept} must always check the source of the message
+\item Constructors with arguments must always check the source of the message to prevent anybody from calling the constructor and set variables instead of the real owner
+\item Failures should never happen after {\tt tvm.accept} (such as {\tt require}, division by zero, overflows, etc.)
+\item Most arguments should be protected by a {\tt require}
+\item Before sending a message, the function should check that it has enough gas (to prevent a partial failure during the message sending phase)
+\item {\tt tvm.accept} should only be called after verifying that the sender of the message if the contracts' owner
+\end{itemize}
+\fi
+
+\chapter{Introduction}
+\input{introduction.tex}
+
+\chapter{Overview}
+\input{overview.tex}
+
+%\ifsolmodules
+%\input{modules.tex}
+%\else
+\input{libraries.tex}
+\input{contracts.tex}
+%\fi
+\end{document}

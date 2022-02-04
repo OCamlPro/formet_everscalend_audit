@@ -1,0 +1,40 @@
+
+\section{Module "IDexPair.sol"}
+
+
+\subsection{Pragmas}
+
+
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+ton & -solidity $>$= 0.39.0 &\\\hline
+\end{tabular}
+
+
+\subsection{Type Definitions}
+
+
+\subsubsection{Struct IDexPairBalances}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{6cm}|}\hline
+lp\_{}supply & uint128 & \\\hline
+left\_{}balance & uint128 & \\\hline
+right\_{}balance & uint128 & \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=3]
+struct IDexPairBalances {
+    uint128 lp_supply;
+    uint128 left_balance;
+    uint128 right_balance;
+}
+\end{lstlisting}
+
+\subsection{Contract Definitions}
+
+\begin{itemize}
+\item IDexPair
+\end{itemize}

@@ -1,0 +1,100 @@
+
+\chapter{Contract Platform}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt Platform.sol}
+
+\section{Static Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+address & root &  \\\hline
+ & & used in @16.Platform.initializeContract\\\hline
+uint8 & platformType &  \\\hline
+ & & used in @16.Platform.initializeContract\\\hline
+TvmCell & initialData &  \\\hline
+ & & used in @16.Platform.initializeContract\\\hline
+TvmCell & platformCode &  \\\hline
+ & & used in @16.Platform.initializeContract\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=8]
+    address static root;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=9]
+    uint8 static platformType;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=10]
+    TvmCell static initialData;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=11]
+    TvmCell static platformCode;
+\end{lstlisting}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for Platform (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=13]
+    constructor(TvmCell contractCode, TvmCell params) public {
+        tvm.accept();
+        initializeContract(contractCode, params);
+    }
+\end{lstlisting}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function initializeContract}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=18]
+    function initializeContract(TvmCell contractCode, TvmCell params) private {
+        tvm.accept();
+        TvmBuilder builder;
+
+        builder.store(root);
+        builder.store(platformType);
+
+        builder.store(platformCode); // ref 1
+        builder.store(initialData);  // ref 2
+        builder.store(params);       // ref 3
+
+        tvm.setcode(contractCode);
+        tvm.setCurrentCode(contractCode);
+
+        onCodeUpgrade(builder.toCell());
+    }
+\end{lstlisting}
+
+\subsection{Function onCodeUpgrade}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=35]
+    function onCodeUpgrade(TvmCell data) private {}
+\end{lstlisting}

@@ -1,0 +1,865 @@
+
+\chapter{Contract UserAccount}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt UserAccount.sol}
+
+\section{Contract Inheritance}
+
+
+\noindent\begin{tabular}{|l|p{5cm}|}\hline
+IUserAccount & \\\hline
+IUserAccountData & \\\hline
+IUpgradableContract & \\\hline
+IUserAccountGetters & \\\hline
+\end{tabular}
+
+
+\section{Static Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+address & owner &  \\\hline
+ & & used in @13.UserAccount.writeWithdrawInfo\\\hline
+ & & used in @13.UserAccount.writeWithdrawInfo\\\hline
+ & & used in @13.UserAccount.writeSupplyInfo\\\hline
+ & & used in @13.UserAccount.writeRepayInformation\\\hline
+ & & used in @13.UserAccount.writeRepayInformation\\\hline
+ & & used in @13.UserAccount.writeRepayInformation\\\hline
+ & & used in @13.UserAccount.writeBorrowInformation\\\hline
+ & & used in @13.UserAccount.writeBorrowInformation\\\hline
+ & & used in @13.UserAccount.writeBorrowInformation\\\hline
+ & & used in @13.UserAccount.withdrawExtraTons\\\hline
+ & & used in @13.UserAccount.withdraw\\\hline
+ & & used in @13.UserAccount.withdraw\\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & used in @13.UserAccount.sendRepayInfo\\\hline
+ & & used in @13.UserAccount.requestWithdrawInfo\\\hline
+ & & used in @13.UserAccount.requestWithdrawInfo\\\hline
+ & & used in @13.UserAccount.requestLiquidationInformation\\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.liquidateVTokens\\\hline
+ & & used in @13.UserAccount.grantVTokens\\\hline
+ & & used in @13.UserAccount.grantVTokens\\\hline
+ & & used in @13.UserAccount.grantVTokens\\\hline
+ & & used in @13.UserAccount.grantVTokens\\\hline
+ & & used in @13.UserAccount.getOwner\\\hline
+ & & used in @13.UserAccount.enterMarket\\\hline
+ & & used in @13.UserAccount.borrowUpdateIndexes\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+ & & used in @13.UserAccount.abortLiquidation\\\hline
+ & & used in @13.UserAccount.abortLiquidation\\\hline
+ & & used in @13.UserAccount.\_{}checkUserAccountHealth\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=23]
+    address static public owner;
+\end{lstlisting}
+
+\section{Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+bool & borrowLock &  \\\hline
+ & & assigned in @13.UserAccount.writeBorrowInformation\\\hline
+ & & used in @13.UserAccount.writeBorrowInformation\\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & assigned in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+ & & assigned in @13.UserAccount.disableBorrowLock\\\hline
+ & & used in @13.UserAccount.disableBorrowLock\\\hline
+ & & assigned in @13.UserAccount.borrow\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+bool & liquidationLock &  \\\hline
+ & & used in @13.UserAccount.withdraw\\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & assigned in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+address & userAccountManager &  \\\hline
+ & & used in @13.UserAccount.withdraw\\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.sendRepayInfo\\\hline
+ & & used in @13.UserAccount.requestWithdrawInfo\\\hline
+ & & used in @13.UserAccount.requestLiquidationInformation\\\hline
+ & & used in @13.UserAccount.removeMarket\\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.liquidateVTokens\\\hline
+ & & used in @13.UserAccount.grantVTokens\\\hline
+ & & used in @13.UserAccount.disableBorrowLock\\\hline
+ & & used in @13.UserAccount.borrowUpdateIndexes\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+ & & used in @13.UserAccount.\_{}checkUserAccountHealth\\\hline
+ & & assigned in @13.UserAccount.:constructor\\\hline
+ & & used in @13.UserAccount.:constructor\\\hline
+uint32 & contractCodeVersion &  \\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+fraction & accountHealth &  \\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & assigned in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.updateUserAccountHealth\\\hline
+ & & used in @13.UserAccount.requestWithdrawInfo\\\hline
+ & & used in @13.UserAccount.requestWithdrawInfo\\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+ & & used in @13.UserAccount.borrow\\\hline
+mapping (uint32 =$>$ bool) & knownMarkets &  \\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & assigned in @13.UserAccount.removeMarket\\\hline
+ & & used in @13.UserAccount.removeMarket\\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.getKnownMarkets\\\hline
+ & & assigned in @13.UserAccount.enterMarket\\\hline
+ & & used in @13.UserAccount.enterMarket\\\hline
+ & & used in @13.UserAccount.enterMarket\\\hline
+mapping (uint32 =$>$ UserMarketInfo) & markets &  \\\hline
+ & & assigned in @13.UserAccount.writeWithdrawInfo\\\hline
+ & & used in @13.UserAccount.writeWithdrawInfo\\\hline
+ & & assigned in @13.UserAccount.writeSupplyInfo\\\hline
+ & & used in @13.UserAccount.writeSupplyInfo\\\hline
+ & & assigned in @13.UserAccount.writeRepayInformation\\\hline
+ & & used in @13.UserAccount.writeRepayInformation\\\hline
+ & & assigned in @13.UserAccount.writeBorrowInformation\\\hline
+ & & used in @13.UserAccount.writeBorrowInformation\\\hline
+ & & used in @13.UserAccount.withdraw\\\hline
+ & & used in @13.UserAccount.upgradeContractCode\\\hline
+ & & used in @13.UserAccount.sendRepayInfo\\\hline
+ & & assigned in @13.UserAccount.removeMarket\\\hline
+ & & used in @13.UserAccount.removeMarket\\\hline
+ & & assigned in @13.UserAccount.onCodeUpgrade\\\hline
+ & & used in @13.UserAccount.onCodeUpgrade\\\hline
+ & & assigned in @13.UserAccount.liquidateVTokens\\\hline
+ & & used in @13.UserAccount.liquidateVTokens\\\hline
+ & & assigned in @13.UserAccount.liquidateVTokens\\\hline
+ & & used in @13.UserAccount.liquidateVTokens\\\hline
+ & & assigned in @13.UserAccount.grantVTokens\\\hline
+ & & used in @13.UserAccount.grantVTokens\\\hline
+ & & used in @13.UserAccount.getMarketInfo\\\hline
+ & & used in @13.UserAccount.getAllMarketsInfo\\\hline
+ & & assigned in @13.UserAccount.enterMarket\\\hline
+ & & used in @13.UserAccount.enterMarket\\\hline
+ & & assigned in @13.UserAccount.enterMarket\\\hline
+ & & used in @13.UserAccount.enterMarket\\\hline
+ & & assigned in @13.UserAccount.enterMarket\\\hline
+ & & used in @13.UserAccount.enterMarket\\\hline
+ & & assigned in @13.UserAccount.\_{}updateMarketInfo\\\hline
+ & & used in @13.UserAccount.\_{}updateMarketInfo\\\hline
+ & & used in @13.UserAccount.\_{}updateMarketInfo\\\hline
+ & & used in @13.UserAccount.\_{}updateMarketInfo\\\hline
+ & & used in @13.UserAccount.\_{}getBorrowSupplyInfo\\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=20]
+    bool public borrowLock;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=21]
+    bool public liquidationLock;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=26]
+    address public userAccountManager;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=29]
+    uint32 public contractCodeVersion;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=31]
+    fraction public accountHealth;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=33]
+    mapping(uint32 => bool) knownMarkets;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=34]
+    mapping(uint32 => UserMarketInfo) markets;
+\end{lstlisting}
+
+\section{Modifier Definitions}
+
+
+\subsection{Modifier onlyOwner}
+
+
+\begin{lstlisting}[firstnumber=412]
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyUserAccountManager}
+
+
+\begin{lstlisting}[firstnumber=417]
+    modifier onlyUserAccountManager() {
+        require(msg.sender == userAccountManager);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlySelf}
+
+
+\begin{lstlisting}[firstnumber=422]
+    modifier onlySelf() {
+        require(msg.sender == address(this));
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier onlyExecutor}
+
+
+\begin{lstlisting}[firstnumber=427]
+    modifier onlyExecutor() {
+        require(
+            msg.sender == userAccountManager ||
+            msg.sender == owner ||
+            msg.sender == address(this)
+        );
+        _;
+    }
+\end{lstlisting}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for UserAccount (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=49]
+    constructor() public { 
+        tvm.accept();
+        userAccountManager = msg.sender;
+    }
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Function abortLiquidation}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=327]
+    function abortLiquidation(address tonWallet, address tip3UserWallet, uint32 marketId, uint256 tokensProvided) external override onlyUserAccountManager {
+        if (tokensProvided != 0) { 
+            _checkUserAccountHealth(owner, _createTokenPayoutPayload(tonWallet, tip3UserWallet, marketId, tokensProvided));
+        } else {
+            _checkUserAccountHealth(owner, _createNoOpPayload());
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function borrow}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=169]
+    function borrow(uint32 marketId, uint256 amountToBorrow, address userTip3Wallet) external override onlyOwner {
+        tvm.rawReserve(msg.value, 2);
+        if (
+            (!borrowLock) &&
+            (accountHealth.nom > accountHealth.denom) &&
+            !liquidationLock
+        ) {
+            borrowLock = true;
+            TvmBuilder tb;
+            tb.store(owner);
+            tb.store(userTip3Wallet);
+            tb.store(amountToBorrow);
+            IUAMUserAccount(userAccountManager).requestIndexUpdate{
+                flag: MsgFlag.REMAINING_GAS
+            }(owner, marketId, tb.toCell());
+        } else {
+            address(msg.sender).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function borrowUpdateIndexes}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=189]
+    function borrowUpdateIndexes(uint32 marketId, mapping(uint32 => fraction) updatedIndexes, address userTip3Wallet, uint256 toBorrow) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+
+        _updateIndexes(updatedIndexes);
+
+        mapping(uint32 => BorrowInfo) borrowInfo;
+        mapping(uint32 => uint256) supplyInfo;
+
+        (borrowInfo, supplyInfo) = _getBorrowSupplyInfo();
+
+        IUAMUserAccount(userAccountManager).passBorrowInformation{
+            flag: MsgFlag.REMAINING_GAS
+        }(owner, userTip3Wallet, marketId, toBorrow, supplyInfo, borrowInfo);
+    }
+\end{lstlisting}
+
+\subsection{Function checkUserAccountHealth}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=249]
+    function checkUserAccountHealth(address gasTo) external override onlyExecutor {
+        tvm.rawReserve(msg.value, 2);
+        TvmBuilder no_op;
+        no_op.store(OperationCodes.NO_OP);
+
+        _checkUserAccountHealth(gasTo, no_op.toCell());
+    }
+\end{lstlisting}
+
+\subsection{Function disableBorrowLock}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=379]
+    function disableBorrowLock() external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+        borrowLock = false;
+        address(userAccountManager).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+    }
+\end{lstlisting}
+
+\subsection{Function enterMarket}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=391]
+    function enterMarket(uint32 marketId) external override onlyOwner {
+        tvm.rawReserve(msg.value, 2);
+        if (!knownMarkets[marketId]) {
+            knownMarkets[marketId] = true;
+
+            markets[marketId].exists = true;
+            markets[marketId]._marketId = marketId;
+            markets[marketId].suppliedTokens = 0;
+        }
+        address(owner).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+    }
+\end{lstlisting}
+
+\subsection{Function getAllMarketsInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=40]
+    function getAllMarketsInfo() external override view responsible returns(mapping(uint32 => UserMarketInfo)) {
+        return {flag: MsgFlag.REMAINING_GAS} markets;
+    }
+\end{lstlisting}
+
+\subsection{Function getKnownMarkets}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=36]
+    function getKnownMarkets() external override view responsible returns(mapping(uint32 => bool)) {
+        return {flag: MsgFlag.REMAINING_GAS} knownMarkets;
+    }
+\end{lstlisting}
+
+\subsection{Function getMarketInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=44]
+    function getMarketInfo(uint32 marketId) external override view responsible returns(UserMarketInfo) {
+        return {flag: MsgFlag.REMAINING_GAS} markets[marketId];
+    }
+\end{lstlisting}
+
+\subsection{Function getOwner}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=105]
+    function getOwner() external override responsible view returns(address) {
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } owner;
+    }
+\end{lstlisting}
+
+\subsection{Function grantVTokens}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=312]
+    function grantVTokens(address tip3UserWallet, uint32 marketId, uint32 marketToLiquidate, uint256 tokensToSeize, uint256 tokensToReturn, uint256 tokensFromReserve) external override onlyUserAccountManager {
+        markets[marketToLiquidate].suppliedTokens += tokensToSeize;
+        if (tokensFromReserve != 0) {
+            IUAMUserAccount(userAccountManager).returnAndSupply{
+                flag: MsgFlag.REMAINING_GAS
+            }(owner, tip3UserWallet, marketId, marketToLiquidate, tokensToReturn, tokensFromReserve);
+        } else {
+            if (tokensToReturn != 0) {
+                _checkUserAccountHealth(owner, _createTokenPayoutPayload(owner, tip3UserWallet, marketId, tokensToReturn));
+            } else {
+                _checkUserAccountHealth(owner, _createNoOpPayload());
+            }
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function liquidateVTokens}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=303]
+    function liquidateVTokens(address tonWallet, address tip3UserWallet, uint32 marketId, uint32 marketToLiquidate, uint256 tokensToSeize, uint256 tokensToReturn, uint256 tokensFromReserve, BorrowInfo borrowInfo) external override onlyUserAccountManager {
+        markets[marketToLiquidate].suppliedTokens -= tokensToSeize;
+        markets[marketId].borrowInfo = borrowInfo;
+
+        IUAMUserAccount(userAccountManager).grantVTokens{
+            flag: MsgFlag.REMAINING_GAS
+        }(tonWallet, owner, tip3UserWallet, marketId, marketToLiquidate, tokensToSeize, tokensToReturn, tokensFromReserve);
+    }
+\end{lstlisting}
+
+\subsection{Function removeMarket}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=283]
+    function removeMarket(uint32 marketId) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+        delete markets[marketId];
+        delete knownMarkets[marketId];
+        address(userAccountManager).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+    }
+\end{lstlisting}
+
+\subsection{Function requestLiquidationInformation}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=293]
+    function requestLiquidationInformation(address tonWallet, address tip3UserWallet, uint32 marketId, uint32 marketToLiquidate, uint256 tokensProvided, mapping(uint32 => fraction) updatedIndexes) external override onlyUserAccountManager {
+        _updateIndexes(updatedIndexes);
+
+        (mapping(uint32 => BorrowInfo) borrowInfo, mapping(uint32 => uint256) supplyInfo) = _getBorrowSupplyInfo();
+
+        IUAMUserAccount(userAccountManager).receiveLiquidationInformation{
+            flag: MsgFlag.REMAINING_GAS
+        }(tonWallet, owner, tip3UserWallet, marketId, marketToLiquidate, tokensProvided, supplyInfo, borrowInfo);
+    }
+\end{lstlisting}
+
+\subsection{Function requestWithdrawInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=138]
+    function requestWithdrawInfo(address userTip3Wallet, uint32 marketId, uint256 tokensToWithdraw, mapping(uint32 => fraction) updatedIndexes) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+        if (
+            accountHealth.nom > accountHealth.denom
+        ) {
+            for ((uint32 marketId_, fraction index): updatedIndexes) {
+                _updateMarketInfo(marketId_, index);
+            }
+
+            mapping(uint32 => BorrowInfo) borrowInfo;
+            mapping(uint32 => uint256) supplyInfo;
+
+            (borrowInfo, supplyInfo) = _getBorrowSupplyInfo();
+
+            IUAMUserAccount(userAccountManager).receiveWithdrawInfo{
+                flag: MsgFlag.REMAINING_GAS
+            }(owner, userTip3Wallet, tokensToWithdraw, marketId, supplyInfo, borrowInfo);
+        } else {
+            address(owner).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function sendRepayInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=223]
+    function sendRepayInfo(address userTip3Wallet, uint32 marketId, uint256 tokensForRepay, mapping(uint32 => fraction) updatedIndexes) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+        for ((uint32 marketId_, fraction index): updatedIndexes) {
+            _updateMarketInfo(marketId_, index);
+        }
+
+        IUAMUserAccount(userAccountManager).receiveRepayInfo{
+            flag: MsgFlag.REMAINING_GAS
+        }(owner, userTip3Wallet, tokensForRepay, marketId, markets[marketId].borrowInfo);
+    }
+\end{lstlisting}
+
+\subsection{Function updateUserAccountHealth}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=266]
+    function updateUserAccountHealth(address gasTo, fraction _accountHealth, mapping(uint32 => fraction) updatedIndexes, TvmCell dataToTransfer) external override onlyUserAccountManager {
+        accountHealth = _accountHealth;
+        liquidationLock = accountHealth.denom > accountHealth.nom;
+        borrowLock = accountHealth.denom > accountHealth.nom;
+        _updateIndexes(updatedIndexes);
+        TvmSlice ts = dataToTransfer.toSlice();
+        (uint8 operation) = ts.decode(uint8);
+        if (operation == OperationCodes.REQUEST_TOKEN_PAYOUT) {
+            (address tonWallet, address userTip3Wallet, uint32 marketId, uint256 tokensToPayout) = ts.decode(address, address, uint32, uint256);
+            IUAMUserAccount(userAccountManager).requestTokenPayout{
+                flag: MsgFlag.REMAINING_GAS
+            }(tonWallet, userTip3Wallet, marketId, tokensToPayout);
+        } else {
+            address(gasTo).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function upgradeContractCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=54]
+    function upgradeContractCode(TvmCell code, TvmCell updateParams, uint32 codeVersion) override external onlyUserAccountManager {
+        require(!borrowLock);
+        tvm.accept();
+
+        bool _borrowLock = borrowLock;
+        bool _liquidationLock = liquidationLock;
+        address _owner = owner;
+        address _userAccountManager = userAccountManager;
+        mapping (uint32 => bool) _knownMarkets = knownMarkets;
+        mapping (uint32 => UserMarketInfo) _markets = markets;
+        fraction _accountHealth = accountHealth;
+
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+
+        onCodeUpgrade(
+            _borrowLock,
+            _liquidationLock,
+            _owner,
+            _userAccountManager,
+            _knownMarkets,
+            _markets,
+            _accountHealth,
+            updateParams,
+            codeVersion
+        );
+    }
+\end{lstlisting}
+
+\subsection{Function withdraw}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=123]
+    function withdraw(address userTip3Wallet, uint32 marketId, uint256 tokensToWithdraw) external override view onlyOwner {
+        if (
+            !liquidationLock &&
+            tokensToWithdraw <= markets[marketId].suppliedTokens
+        ) {
+            tvm.rawReserve(msg.value, 2);
+            
+            IUAMUserAccount(userAccountManager).requestWithdraw{
+                flag: MsgFlag.REMAINING_GAS
+            }(owner, userTip3Wallet, marketId, tokensToWithdraw);
+        } else {
+            address(owner).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function withdrawExtraTons}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=406]
+    function withdrawExtraTons() external override view onlyOwner {
+        address(owner).transfer({ value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED });
+    }
+\end{lstlisting}
+
+\subsection{Function writeBorrowInformation}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=204]
+    function writeBorrowInformation(uint32 marketId, uint256 toBorrow, address userTip3Wallet, fraction marketIndex) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+        if (toBorrow > 0) {
+            _updateMarketInfo(marketId, marketIndex);
+            markets[marketId].borrowInfo.tokensBorrowed += toBorrow;
+        }
+
+        borrowLock = false;
+
+        if (toBorrow > 0) {
+            _checkUserAccountHealth(owner, _createTokenPayoutPayload(owner, userTip3Wallet, marketId, toBorrow));
+        } else {
+            _checkUserAccountHealth(owner, _createNoOpPayload());
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function writeRepayInformation}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=234]
+    function writeRepayInformation(address userTip3Wallet, uint32 marketId, uint256 tokensToReturn, BorrowInfo bi) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+
+        markets[marketId].borrowInfo = bi;
+        
+        if (tokensToReturn != 0) { 
+            _checkUserAccountHealth(owner, _createTokenPayoutPayload(owner, userTip3Wallet, marketId, tokensToReturn));
+        } else {
+            _checkUserAccountHealth(owner, _createNoOpPayload());
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function writeSupplyInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=112]
+    function writeSupplyInfo(uint32 marketId, uint256 tokensToSupply, fraction index) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+        markets[marketId].suppliedTokens += tokensToSupply;
+        _updateMarketInfo(marketId, index);
+
+        _checkUserAccountHealth(owner, _createNoOpPayload());
+    }
+\end{lstlisting}
+
+\subsection{Function writeWithdrawInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=160]
+    function writeWithdrawInfo(address userTip3Wallet, uint32 marketId, uint256 tokensToWithdraw, uint256 tokensToSend) external override onlyUserAccountManager{
+        tvm.rawReserve(msg.value, 2);
+        markets[marketId].suppliedTokens -= tokensToWithdraw;
+        _checkUserAccountHealth(owner, _createTokenPayoutPayload(owner, userTip3Wallet, marketId, tokensToSend));
+    }
+\end{lstlisting}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function \_{}checkUserAccountHealth}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=257]
+    function _checkUserAccountHealth(address gasTo, TvmCell dataToTransfer) internal view {
+        mapping(uint32 => uint256) supplyInfo;
+        mapping(uint32 => BorrowInfo) borrowInfo;
+        (borrowInfo, supplyInfo) = _getBorrowSupplyInfo();
+        IUAMUserAccount(userAccountManager).calculateUserAccountHealth{
+            flag: MsgFlag.REMAINING_GAS
+        }(owner, gasTo, supplyInfo, borrowInfo, dataToTransfer);
+    }
+\end{lstlisting}
+
+\subsection{Function \_{}createNoOpPayload}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=373]
+    function _createNoOpPayload() internal pure returns (TvmCell) {
+        TvmBuilder no_op;
+        no_op.store(OperationCodes.NO_OP);
+        return no_op.toCell();
+    }
+\end{lstlisting}
+
+\subsection{Function \_{}createTokenPayoutPayload}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=363]
+    function _createTokenPayoutPayload(address tonWallet, address userTip3Wallet, uint32 marketId, uint256 tokensToSend) internal pure returns (TvmCell) {
+        TvmBuilder op;
+        op.store(OperationCodes.REQUEST_TOKEN_PAYOUT);
+        op.store(tonWallet);
+        op.store(userTip3Wallet);
+        op.store(marketId);
+        op.store(tokensToSend);
+        return op.toCell();
+    }
+\end{lstlisting}
+
+\subsection{Function \_{}getBorrowSupplyInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=356]
+    function _getBorrowSupplyInfo() internal view returns(mapping(uint32 => BorrowInfo) borrowInfo, mapping(uint32 => uint256) supplyInfo) {
+        for ((uint32 marketId, UserMarketInfo umi) : markets) {
+            supplyInfo[marketId] = umi.suppliedTokens;
+            borrowInfo[marketId] = umi.borrowInfo;
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function \_{}updateIndexes}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=338]
+    function _updateIndexes(mapping(uint32 => fraction) updatedIndexes) internal {
+        for ((uint32 marketId_, fraction index): updatedIndexes) {
+            _updateMarketInfo(marketId_, index);
+        }
+    }
+\end{lstlisting}
+
+\subsection{Function \_{}updateMarketInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=344]
+    function _updateMarketInfo(uint32 marketId, fraction index) internal {
+        fraction tmpf;
+        BorrowInfo bi = markets[marketId].borrowInfo;
+        if (markets[marketId].borrowInfo.tokensBorrowed != 0) {
+            tmpf = bi.tokensBorrowed.numFMul(index);
+            tmpf = tmpf.fDiv(bi.index);
+        } else {
+            tmpf = fraction(0, 1);
+        }
+        markets[marketId].borrowInfo = BorrowInfo(tmpf.toNum(), index);
+    }
+\end{lstlisting}
+
+\subsection{Function onCodeUpgrade}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=82]
+    function onCodeUpgrade(
+        bool _borrowLock,
+        bool _liquidationLock,
+        address _owner,
+        address _userAccountManager,
+        mapping(uint32 => bool) _knownMarkets,
+        mapping(uint32 => UserMarketInfo) _markets,
+        fraction _accountHealth,
+        TvmCell,
+        uint32 codeVersion
+    ) private {
+        tvm.resetStorage();
+        borrowLock = _borrowLock;
+        liquidationLock = _liquidationLock;
+        owner = _owner;
+        userAccountManager = _userAccountManager;
+        knownMarkets = _knownMarkets;
+        markets = _markets;
+        accountHealth = _accountHealth;
+
+        contractCodeVersion = codeVersion;
+    }
+\end{lstlisting}
+\paragraph{Some functions inherited by using}

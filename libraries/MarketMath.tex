@@ -1,0 +1,66 @@
+
+\chapter{Library MarketMath}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt MarketMath.sol}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function calculateBorrowingRate}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=8]
+    function calculateBorrowingRate(uint256 currentPool, uint256 totalBorrowed, uint256 totalReserves, uint256 totalSupply) 
+        internal pure returns (uint256) 
+    {
+
+    }
+\end{lstlisting}
+
+\subsection{Function calculateExchangeRate}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=14]
+    function calculateExchangeRate(uint256 currentPool, uint256 totalBorrowed, uint256 totalReserves, uint256 totalSupply)
+        internal pure returns (uint256) 
+    {
+        return math.div(currentPool - totalReserves + totalBorrowed, totalSupply);
+    }
+\end{lstlisting}
+
+\subsection{Function calculateUtilizationRate}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=4]
+    function calculateUtilizationRate(uint256 currentPool, uint256 totalBorrowed) internal pure returns (uint256) {
+
+    }
+\end{lstlisting}
+
+\subsection{Function recalculateState}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=20]
+    function recalculateState(uint256 currentPool, uint256 totalBorrowed, uint256 totalReserves, uint256 totalSupply)
+        internal pure 
+    {
+        // uint256 exchangeRate = calculateExchangeRate(currentPool, totalBorrowed, totalReserves, totalSupply);
+    }
+\end{lstlisting}

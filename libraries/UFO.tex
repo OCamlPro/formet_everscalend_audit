@@ -1,0 +1,84 @@
+
+\chapter{Library UFO}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt FloatingPointOperations.sol}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function numAdd}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=114]
+    function numAdd(uint256 a, fraction b) internal pure returns (uint256) {
+        return (a*b.denom + b.nom) / b.denom;
+    }
+\end{lstlisting}
+
+\subsection{Function numFDiv}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=110]
+    function numFDiv(uint256 a, fraction b) internal pure returns (fraction) {
+        return fraction(a * b.denom, b.nom);
+    }
+\end{lstlisting}
+
+\subsection{Function numFMul}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=106]
+    function numFMul(uint256 a, fraction b) internal pure returns (fraction) {
+        return fraction(a * b.nom, b.denom);
+    }
+\end{lstlisting}
+
+\subsection{Function numMul}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=102]
+    function numMul(uint256 a, fraction b) internal pure returns (uint256) {
+        return a*b.nom/b.denom;
+    }
+\end{lstlisting}
+
+\subsection{Function numSub}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=118]
+    function numSub(uint256 a, fraction b) internal pure returns (uint256) {
+        return (a * b.denom - b.nom)/b.denom;
+    }
+\end{lstlisting}
+
+\subsection{Function toF}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=122]
+    function toF(uint256 num) internal pure returns(fraction) {
+        return fraction(num, 1);
+    }
+\end{lstlisting}

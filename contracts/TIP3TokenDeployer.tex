@@ -1,0 +1,250 @@
+
+\chapter{Contract TIP3TokenDeployer}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt TIP3Deployer.sol}
+
+\section{Contract Inheritance}
+
+
+\noindent\begin{tabular}{|l|p{5cm}|}\hline
+ITIP3Deployer & \\\hline
+ITIP3DeployerManageCode & \\\hline
+ITIP3DeployerServiceInfo & \\\hline
+IUpgradableContract & \\\hline
+\end{tabular}
+
+
+\section{Variable Definitions}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+TvmCell & rootContractCode &  \\\hline
+ & & used in @12.TIP3TokenDeployer.upgradeContractCode\\\hline
+ & & assigned in @12.TIP3TokenDeployer.setTIP3RootContractCode\\\hline
+ & & used in @12.TIP3TokenDeployer.setTIP3RootContractCode\\\hline
+ & & used in @12.TIP3TokenDeployer.getServiceInfo\\\hline
+ & & used in @12.TIP3TokenDeployer.getFutureTIP3Address\\\hline
+ & & used in @12.TIP3TokenDeployer.deployTIP3\\\hline
+TvmCell & walletContractCode &  \\\hline
+ & & used in @12.TIP3TokenDeployer.upgradeContractCode\\\hline
+ & & assigned in @12.TIP3TokenDeployer.setTIP3WalletContractCode\\\hline
+ & & used in @12.TIP3TokenDeployer.setTIP3WalletContractCode\\\hline
+ & & used in @12.TIP3TokenDeployer.getServiceInfo\\\hline
+ & & used in @12.TIP3TokenDeployer.getFutureTIP3Address\\\hline
+address & ownerAddress &  \\\hline
+ & & used in @12.TIP3TokenDeployer.upgradeContractCode\\\hline
+ & & assigned in @12.TIP3TokenDeployer.:constructor\\\hline
+ & & used in @12.TIP3TokenDeployer.:constructor\\\hline
+uint32 & contractCodeVersion &  \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=18]
+    TvmCell rootContractCode;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=19]
+    TvmCell walletContractCode;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=20]
+    address ownerAddress;
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=22]
+    uint32 contractCodeVersion;
+\end{lstlisting}
+
+\section{Modifier Definitions}
+
+
+\subsection{Modifier onlyOwner}
+
+
+\begin{lstlisting}[firstnumber=137]
+    modifier onlyOwner() {
+        require(msg.sender == ownerAddress, TIP3DeployerErrorCodes.ERROR_MSG_SENDER_IS_NOT_OWNER);
+        _;
+    }
+\end{lstlisting}
+
+\subsection{Modifier checkMsgValue}
+
+
+\begin{lstlisting}[firstnumber=145]
+    modifier checkMsgValue(uint128 gramsRequired) {
+        require(msg.value > gramsRequired, TIP3DeployerErrorCodes.ERROR_MSG_VALUE_IS_TOO_LOW);
+        _;
+    }
+\end{lstlisting}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for TIP3TokenDeployer (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=28]
+    constructor(address _owner) public {
+        tvm.accept();
+        ownerAddress = _owner;
+    }
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Function deployTIP3}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=66]
+    function deployTIP3(IRootTokenContract.IRootTokenContractDetails rootInfo, uint128 deployGrams, uint256 pubkeyToInsert, TvmCell payloadToReturn) 
+        external
+        responsible
+        override
+        checkMsgValue(deployGrams)
+        returns (address, TvmCell) 
+    {
+        tvm.rawReserve(msg.value, 2);
+        address tip3TokenAddress = new RootTokenContract{
+            value: deployGrams,
+            flag: 0,
+            code: rootContractCode,
+            pubkey: pubkeyToInsert,
+            varInit: {
+                _randomNonce: 0,
+                name: rootInfo.name,
+                symbol: rootInfo.symbol,
+                decimals: rootInfo.decimals,
+                wallet_code: walletContractCode 
+            }
+        }(rootInfo.root_public_key, rootInfo.root_owner_address);
+
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } (tip3TokenAddress, payloadToReturn);
+    }
+\end{lstlisting}
+
+\subsection{Function getFutureTIP3Address}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=95]
+    function getFutureTIP3Address(IRootTokenContract.IRootTokenContractDetails rootInfo, uint256 pubkeyToInsert) external override responsible returns (address) {
+        tvm.accept();
+        TvmCell stateInit = tvm.buildStateInit({
+            contr: RootTokenContract,
+            code: rootContractCode,
+            pubkey: pubkeyToInsert,
+            varInit: {
+                _randomNonce: 0,
+                name: rootInfo.name,
+                symbol: rootInfo.symbol,
+                decimals: rootInfo.decimals,
+                wallet_code: walletContractCode 
+            }
+        });
+
+        return address.makeAddrStd(0, tvm.hash(stateInit));
+    }
+\end{lstlisting}
+
+\subsection{Function getServiceInfo}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=131]
+    function getServiceInfo() external override responsible view returns (ServiceInfo) {
+        return ServiceInfo(rootContractCode, walletContractCode);
+    }
+\end{lstlisting}
+
+\subsection{Function setTIP3RootContractCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=118]
+    function setTIP3RootContractCode(TvmCell _rootContractCode) external override onlyOwner {
+        tvm.accept();
+        rootContractCode = _rootContractCode;
+    }
+\end{lstlisting}
+
+\subsection{Function setTIP3WalletContractCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=126]
+    function setTIP3WalletContractCode(TvmCell _walletContractCode) external override onlyOwner {
+        tvm.accept();
+        walletContractCode = _walletContractCode;
+    }
+\end{lstlisting}
+
+\subsection{Function upgradeContractCode}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=33]
+    function upgradeContractCode(TvmCell code, TvmCell updateParams, uint32 codeVersion) override external onlyOwner {
+        tvm.accept();
+
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+
+        onCodeUpgrade(
+            ownerAddress,
+            rootContractCode,
+            walletContractCode,
+            updateParams,
+            codeVersion
+        );
+    }
+\end{lstlisting}
+
+\section{Internal Method Definitions}
+
+
+\subsection{Function onCodeUpgrade}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=48]
+    function onCodeUpgrade(
+        address,
+        TvmCell,
+        TvmCell,
+        TvmCell,
+        uint32
+    ) private {
+
+    }
+\end{lstlisting}

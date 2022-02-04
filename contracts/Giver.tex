@@ -1,0 +1,44 @@
+
+\chapter{Contract Giver}
+
+\minitoc
+
+\section{Overview}
+
+
+In file {\tt Giver.sol}
+
+\section{Constructor Definitions}
+
+
+\subsection{Constructor}
+
+\issueCritical{Constructor for Giver (fake)}{loren ipsum  loren ipsum  loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+
+loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum loren ipsum
+loren ipsum loren ipsum loren ipsum }
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=6]
+    constructor() public {
+        tvm.accept();
+    }
+\end{lstlisting}
+
+\section{Public Method Definitions}
+
+
+\subsection{Function sendGrams}
+
+\noindent\begin{itemize}
+\item TODO
+\end{itemize}
+
+\begin{lstlisting}[firstnumber=10]
+    function sendGrams(address dest, uint64 amount) external pure {
+        tvm.accept();
+        address(dest).transfer({value: amount, bounce: false});
+    }
+\end{lstlisting}

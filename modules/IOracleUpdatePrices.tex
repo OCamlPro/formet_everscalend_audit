@@ -1,0 +1,53 @@
+
+\section{Module "IOracleUpdatePrices.sol"}
+
+
+\subsection{Pragmas}
+
+
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+ton & -solidity $>$= 0.39.0 &\\\hline
+AbiHeader &  time &\\\hline
+AbiHeader &  expire &\\\hline
+AbiHeader &  pubkey &\\\hline
+\end{tabular}
+
+
+\subsection{Imports}
+
+
+\noindent\begin{tabular}{|l|l|p{5cm}|}\hline
+../../utils/Dex/IDexPair.sol &\\\hline
+\end{tabular}
+
+
+\subsection{Type Definitions}
+
+
+\subsubsection{Struct MarketPriceInfo}
+
+
+\ifsoltables
+\noindent\begin{tabular}{|l|l|p{6cm}|}\hline
+swapPair & address & \\\hline
+isLeft & bool & \\\hline
+tokens & uint128 & \\\hline
+usd & uint128 & \\\hline
+\end{tabular}
+\fi
+
+
+\begin{lstlisting}[firstnumber=8]
+struct MarketPriceInfo {
+    address swapPair;
+    bool isLeft;
+    uint128 tokens;
+    uint128 usd;
+}
+\end{lstlisting}
+
+\subsection{Contract Definitions}
+
+\begin{itemize}
+\item IOracleUpdatePrices
+\end{itemize}
