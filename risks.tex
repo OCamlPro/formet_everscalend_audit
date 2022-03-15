@@ -1,0 +1,30 @@
+
+\section{Insolvency risk} %???
+
+Insolvency is when a borrower's loan becomes worth more than their collateral. In this case neither they nor the liquidators are incentivized to repay the loan, which removes liquidity from the market since these users will hold on to loans that will not get repaid. Insolvency can happen if the underlying tokens of the collateral vTokens lose their value quickly or the borrowed tokens' price increases rapidly.
+
+\section{Illiquidity risk} %???
+
+Illiquidity is when there aren't enough tokens in the market for a supplier to do a withdrawal or for a borrower to borrow some amount. It is problematic because users are supposed to have control over their tokens and be able to withdraw them whenever they want to, given that their account's health allows it. Illiquidity can happen as well if the price of the borrowed token increases rapidly, that will disincentivise the borrowers and the liquidators from repaying the loan as they would rather keep holding their tokens or selling them. Same as the suppliers which will lead to a bank run (an event in which suppliers will try to withdraw their supplies as quickly as possible to avoid losing tokens) and that will lead to the slowest suppliers, especially if they want to borrow big amounts, to lose some or all of their tokens since the loans aren't getting repaid.
+
+\section{Unsound math risk}
+
+Math operations use approximations and rounding. It could lead in some particular cases to errors that could affect the functioning of the system or introduce vulnerabilities that can be taken advantage of. % Examples?
+
+\section{Centralization risk} %???
+
+The risk that comes with having an administrator or super user role which gives the detainer of that role the capability to unilaterally and arbitrarily modify the functioning of the system is in itselft risky. 
+
+Focusing too much power on a single entry point means that losing access to it, or losing it's possession to a malicious user could lead to bad consequences. Especially since many values like the collateral factor and liquidation multiplier are editable with an admin role, the contract owner can also decide who can and who can't change market parameters. Therefore such infromation needs to be clarified an a system put in place making sure that major changes to the system can't be done individually and manually like that.
+
+\section{Locking risk} %unlocking in case of failure or operation not finishing
+
+When a locking mecanism is used, there is a risk of malicious users taking advantage of to affect the capabilities of other users to realise some operations. There is also the risk of programming errors which might lead to a lock that does not get unlocked or that is unlocked at the wrong time and that can affect negatively the functioning of the sytem. 
+
+\section{Double spending risk} %locking system
+
+Double spending is when a user tries to use the same amount of tokens to pay for two different things and profit off of that. It can happen for example if a supplier wishes to get twice the amount of vTokens with the same supply or when a liquidator tries to liquidate with the same amount twice. 
+
+ \section{Visibility risk} % Use of modifiers
+
+This risk involves all the risks of having functions in contracts that are accessible to users which are not intended to use them. Especially if they are non-pure functions which can write information on the system and significantly affect it's functioning.
