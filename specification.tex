@@ -212,7 +212,9 @@ $$
     \frac{ba}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{\M{T}} = ind
     \end{dcases}
 $$
-It is calculated as follows:
+Where $\CF{T}$ is the collateral factor for the market of the tokens $T$. It is a value that is set by the adminitrator and which determines by how much the collateral has to be bigger than the borrowed amout.
+
+The account health is then calculated as follows:
 $$
   AH_u = 
     \frac { 
@@ -400,6 +402,8 @@ Used notation:
 In the source code a lot of the interactions between the smart contracts are done with the intermediary of interfaces. In these usage scenarios we ignore the interfaces and present only the interactions between the contracts which the interfaces refer to. 
 
 \subsection{Updating a user's account health}
+We start with a the scenario describing how updating the user's account health happens. This scenario was added because it's used by the other ones and to avoid repeating it everytime, we describe here what happens when we say that the user's account health is updated.
+
 \begin{enumerate}
   \item \verb|UAM.calculateUserAccountHealth| is called from |UA| with a payload.
   \item \verb|UAM.calculateUserAccountHealth| calls \\\verb|MA.calculateUserAccountHealth| which:
