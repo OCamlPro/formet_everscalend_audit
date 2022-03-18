@@ -40,18 +40,18 @@ The following mathematical notations are used in the document to simplify the eq
 \newcommand\USD{\mathit{USD}}
 
 \newcommand\M[1]{\mathit{m_{#1}}}
-\newcommand\T[1]{\mathit{T_{#1}}}
-\newcommand\vT[1]{\mathit{vT_{#1}}}
+\newcommand\T[1]{\mathit{T(#1)}}
+\newcommand\vT[1]{\mathit{vT(#1)}}
 
 \newcommand\ER[2]{\mathit{ER(#1, #2)}}
 
 \newcommand\BA[1]{\mathit{Ba(#1)}}
 \newcommand\C[1]{\mathit{C(#1)}}
 
-\newcommand\UR[1]{\mathit{UR_{#1}}}
-\newcommand\UMul[1]{\mathit{UM_{#1}}}
-\newcommand\UBR[1]{\mathit{UbR_{#1}}}
-\newcommand\BIR[1]{\mathit{BIR_{#1}}}
+\newcommand\UR[1]{\mathit{UR(#1)}}
+\newcommand\UMul[1]{\mathit{UM(#1)}}
+\newcommand\UBR[1]{\mathit{UbR(#1)}}
+\newcommand\BIR[1]{\mathit{BIR(#1)}}
 \newcommand\RF[1]{\mathit{RF_{#1}}}
 
 \newcommand\RTB[1]{\mathit{rTB(#1)}}
@@ -121,7 +121,7 @@ There are two kinds of clearly identifiable users:
   \item The admin who is the deployer of the main contracts of the system like \verb|MarketAggregator|, \verb|WalletController| or \verb|Oracle|.
   \item The ``normal'' users who interact with the system.
 \end{itemize}
-And there are four roles\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/utils/interfaces/IRoles.sol\#L13-L15}{From ``IRoles.sol'', Lines: 13-15.}} that can be taken by the users and which determine their permissions when it comes to interacting with the system:
+And there are four roles that can be taken by the users and which determine their permissions when it comes to interacting with the system:
 \begin{itemize}
   \item Owner: this is the role of the admin only. It gives them the right to modify all the parameters of the system.
   \item Upgrader: this role can be given to a user by the owner and it gives them the right to upgrades some contracts' codes.
@@ -170,43 +170,43 @@ The purpose of this mecanism is to financially incentivize the liquidators to ad
 The values of interest rates increase when the demand is high and decrease when it is low. The calculation of the real interest requires some intermediary variables:
 
 \begin{itemize}
-  \item The utilisation rate\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/libraries/MarketOperations.sol\#L16}{From ``MarketOperations.sol'', Line: 16.}} $\UR{m}$ for the market $m$:
+  \item The utilisation rate $\UR{m}$ for the market $m$:
   $$
     \UR{m} = \frac{ \BA{m} }{ \RTB{m} + \BA{m} }
   $$
   The utilisation rate unifies supply and borrowing demand into a single variable.
-  \item The borrowing interest rate\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/libraries/MarketOperations.sol\#L18-L19}{From ``MarketOperations.sol'', Lines: 18-19.}} $\BIR{m}$ for the market $m$:
+  \item The borrowing interest rate $\BIR{m}$ for the market $m$:
   $$
     \BIR{m} = \UR{m} * \UMul{m} + \UBR{m}
   $$ % in: MarketOperations.calculateBorrowInterestRate
-  \item the simple interest factor\footnote{\href{https://github.comdev/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L167}{From ``MarketOperations.sol'', Line: 167.}} $\SIF{m}$ for the market $m$:
+  \item the simple interest factor $\SIF{m}$ for the market $m$:
   $$
     \SIF{m} = \BIR{m} \times \Delta t
   $$
 \end{itemize}
-The accumulated interest\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L171-L172}{From ``MarketOperations.sol'', Lines: 171-172.}} for the market $m$ can then be calculated as follows:
+The accumulated interest for the market $m$ can then be calculated as follows:
 $$
   \AI{m} = \BA{m} \times \SIF{m}
 $$ % in: MarketsAggregator.finterestAccumulated
-with $\Delta t$ being the time difference in seconds between the current time and the last moment at which the interest rate was calculated\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L160}{From ``MarketOperations.sol'', Line: 160.}}.
+with $\Delta t$ being the time difference in seconds between the current time and the last moment at which the interest rate was calculated.
 
 \subsubsection{Interest rate indexes}
 
-Each time the interest rate is calculated in a certain market, the interest rate index associated to that market is updated. New indexes are calculated\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L165-L170}{From ``MarketsAggregator.sol'', Lines: 165-170.}} as follows:
+Each time the interest rate is calculated in a certain market, the interest rate index associated to that market is updated. New indexes are calculated as follows:
 $$
 \IND{m}{n} = (\SIF{m} + 1) \times\IND{m}{n-1}
 $$
-With\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L330}{From ``MarketsAggregator.sol'', Line: 330.}}: $\IND{m}{0} = 1$.
+With: $\IND{m}{0} = 1$.
 
 \subsubsection{Reserves}
 
-When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve, the rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L173-L175}{From ``MarketsAggregator.sol'', Lines: 173-175.}} $(\AI{m} \times \RF{m})$ to it.
+When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve, the rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding $(\AI{m} \times \RF{m})$ to it.
 
 The purpose of the reserves is to protect a portion of the lenders interest so that they don't lose everything in case of liquidation, only their cash can be liquidated. %reference code
 
 \subsubsection{vToken exchange rate calculation}
 
-As stated previously the exchange rates from vTokens to real tokens depend on the supply and borrowing demand of those tokens. It is calculated\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/libraries/MarketOperations.sol\#L24-L26}{From ``MarketOperations.sol'', Lines: 24-26.}} as follows:
+As stated previously the exchange rates from vTokens to real tokens depend on the supply and borrowing demand of those tokens. It is calculated as follows:
 
 $$
   \ER{\vT{T}}{T} = \frac{\RTB{\M{T}} + \BA{m} - \RES{\M{T}}}{\VTB{\M{T}}}
@@ -216,11 +216,11 @@ $$
 
 A user $u$'s account health determines whether or not it is liquidable, if $AH_u < 1$ then it is otherwise it isn't. If the user's account is liquidable then the user can't withdraw their tokens or borrow more tokens before some other users liquidiates them or they supply more tokens to the market to improve their account's health. The account's health is calculated whenever the user tries to perform any market operation or gets one of his loans liquidated.
 
-\noindent Given\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/interfaces/IModule.sol\#L203-L207}{From ``IModule.sol'', Lines: 203-207.}}:
+\noindent Given:
 $$
   sval(T, vTA) = \frac{vTA \times \ER{\vT{T}}{T}}{\ER{T}{\USD}} \times \CF{T}
 $$
-and\footnote{\href{https://github.dev/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/interfaces/IModule.sol\#L215-L226}{From ``IModule.sol'', Lines: 215-226.}}:
+and:
 $$
   bval(\M{T}, ba, ind) =\begin{dcases}
     0 & ba = 0\\
@@ -230,7 +230,7 @@ $$
 $$
 Where $\CF{T}$ is the collateral factor for the market of the tokens $T$. It is a value that is set by the adminitrator and which determines by how much the collateral has to be bigger than the borrowed amout.
 
-The account health\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/interfaces/IModule.sol\#L187-L227}{From ``IModule.sol'', Lines: 187-227.}} is then calculated as follows:
+The account health is then calculated as follows:
 $$
   AH_u =
     \frac {
@@ -256,14 +256,14 @@ Where:
   \end{itemize}
 \end{itemize}
 
-A user's borrowing capacity\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/BorrowModule.sol\#L98}{From ``BorrowModule.sol'', Line: 98.}} is a value in USD that determines how many vTokens a user can use as collateral or redeem, the limit being that the vToken's worth has to be less that the user's borrowing capacity. The borrowing capacity is calculated as follows:
+A user's borrowing capacity is a value in USD that determines how many vTokens a user can use as collateral or redeem, the limit being that the vToken's worth has to be less that the user's borrowing capacity. The borrowing capacity is calculated as follows:
 $$
   \BC{u} = (\sum_{(m_{\T{i}}, \uvTA{u}{\T{i}}) \in \SI{u}} sval(\T{i}, \uvTA{u}{\T{i}})) - (\sum_{(m_{T_j}, ba, ind) \in \BI{u}} bval(m_{T_j}, ba, ind))
 $$
 
 \subsubsection{Liquidation}
 
-The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{\M{T}}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $R_T$ of a borrower $lu$'s debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get $vTA$ is calculated\footnote{\href{https://github.dev/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/LiquidationModule.sol\#L118-L126}{From ``LiquidationModule.sol'', Lines: 118-126.}} as follows:
+The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{\M{T}}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $R_T$ of a borrower $lu$'s debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get $vTA$ is calculated as follows:
 $$
   vTA = min(R_T \times \ER{T}{\vT{T}} \times \LMul{\M{T}}, \uvTA{lu}{T})
 $$
