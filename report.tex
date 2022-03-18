@@ -1,5 +1,6 @@
 \documentclass{report}
 
+\usepackage[a4paper]{geometry}
 \usepackage{fancyhdr}
 \usepackage{minitoc}
 \usepackage{titlesec}
@@ -7,6 +8,38 @@
 \usepackage{array}
 \usepackage{titletoc}
 \usepackage[table]{xcolor}
+%\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{ragged2e}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{aeguill}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{etoc}
+
+\makeatletter
+\newif\ifTOC@marginpatched
+\newcommand{\SetTOCrightmargin}[1]{%
+\ifTOC@marginpatched\else
+\let\old@pnumwidth\@pnumwidth
+\let\old@dottedtocline\@dottedtocline
+\def\@dottedtocline##1##2##3##4##5{%
+    \old@dottedtocline{##1}{##2}{##3}{##4}{##5\hskip\TOC@rightmargin}}
+\let\old@l@part\l@part
+\def\l@part##1##2{\old@l@part{##1}{##2\hskip\TOC@rightmargin}}
+\let\old@l@chapter\l@chapter
+\def\l@chapter##1##2{\old@l@chapter{##1}{##2\hskip\TOC@rightmargin}}
+\fi
+\TOC@marginpatchedtrue
+\edef\TOC@rightmargin{#1}%
+\dimen0=\old@pnumwidth\relax
+\advance\dimen0 by #1\relax
+\edef\@pnumwidth{\the\dimen0}} %etoc style
+\makeatother
+
 \renewcommand{\listfigurename}{Table of all Found Issues}
 \input{highlighter}
 
@@ -15,8 +48,8 @@
 \newif\ifsolissues
 \newif\ifsoldraft
 
-\soldrafttrue
-%\soldraftfalse
+%\soldrafttrue
+\soldraftfalse
 
 %\solmodulestrue
 \solmodulesfalse
@@ -24,8 +57,8 @@
 \soltablestrue
 %\soltablesfalse
 
-\solissuestrue
-%\solissuesfalse
+%\solissuestrue
+\solissuesfalse
 
 
 
@@ -63,9 +96,21 @@
 \fancyfoot[RO,RE]{\thepage}
 \fancyfoot[LO,LE]{\leftmark}
 
+\pagestyle{fancy} % to have better page headers
+\renewcommand{\headrulewidth}{2pt}
+\fancyhf[lh,rh,ch]{}
+\fancyhf[lh]{\begin{minipage}[b]{\textwidth}
+        \begin{tabularx}{1\textwidth} {
+                >{\raggedright\arraybackslash}X
+                >{\raggedleft\arraybackslash}X
+            }
+            \textit{\rightmark}&\textit{\leftmark}\\
+        \end{tabularx}
+    \end{minipage}}
+
 \begin{document}
 
-\title{Audit}
+\title{Everscalend functional specification}
 \author{By OCamlPro}
 \maketitle
 \dominitoc
@@ -73,6 +118,11 @@
 \listoffigures
 \fi
 \tableofcontents
+
+
+\etocsettocstyle{\subsection*{\contentsname}\hrule\smallskip
+\begin{minipage}{.95\linewidth}}
+{\end{minipage}\medskip\hrule} %etoc style
 
 \ifsoldraft
 \chapter{Only for Auditors}
@@ -115,13 +165,19 @@ Issues can be entered with:
 \chapter{Introduction}
 \input{introduction.tex}
 
-\chapter{Overview}
-\input{overview.tex}
+\chapter{High-level system description}
+\input{specification.tex}
 
-%\ifsolmodules
-%\input{modules.tex}
-%\else
-\input{libraries.tex}
-\input{contracts.tex}
-%\fi
+\chapter{Risks}
+\input{risks.tex}
+
+\chapter{System Properties}
+\input{system_properties.tex}
+
+%\chapter{Code errors}
+%\chapter{Appendix}
+
+\chapter{Code audit}
+\input{audit.tex}
+
 \end{document}
