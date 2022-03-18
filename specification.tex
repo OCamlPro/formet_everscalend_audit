@@ -19,11 +19,11 @@ Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system imple
 
   vToken & A virtual token, it is a currency that only exists on Everscalend and it is used to determine the amount of tokens that a supplier owns in a market. vTokens are acquired by the users when they supply some tokens to the market. When interest rate is accumulated on the supplied tokens to the market, the exchange rate from the vTokens to the real tokens increases to account for the accumulated interest that the suppliers will get to retrieve when they withdraw their tokens. \\\hline
 
-  Collateral & An amount of vTokens that a borrower has to have in order to borrow some amount of real tokens. \\\hline
+  Collateral & An amount of vTokens that a borrower has to have in order to borrow some amount of real tokens that. Everscalend like other DEFI lending systems is over-collateralized which means that the collateral has to be worth more than the amount of tokens that will be borrowed. \\\hline
 
   Collateral factor & Ranging from 0 to 1, it represents the amount of tokens that can be borrowed for a collateral. e.g. a collateral factor of 0.9 allows the borrowing of a number of tokens worth $90\%$ of the collateral. \\\hline
 
-  Account health & The sum of the USD value of a user's supplied tokens divided by the sum of the USD value of all the tokens they borrowed. It is used to determine whether a user is eligible for liquidation or not. When the nominator is greater than the denominator in that fraction, we say that the user's account is healthy, otherwise it is unhealthy. \\\hline
+  Account health & The sum of the USD value of a user's supplied tokens divided by the sum of the USD value of all the tokens they borrowed. It is used to determine whether a user is eligible for liquidation or not. When the account health is greater than one, we say that the user's account is healthy, otherwise it is unhealthy. \\\hline
 
   Liquidation & The process in which some user's debt is liquidated by another user, by paying a portion of the owed tokens in exchange for the borrower's vTokens at a better exchange rate than the market. \\\hline
 
@@ -41,6 +41,7 @@ The following mathematical notations are used in the document to simplify the eq
 
 \newcommand\M[1]{\mathit{m_{#1}}}
 \newcommand\T[1]{\mathit{T_{#1}}}
+\newcommand\vT[1]{\mathit{vT_{#1}}}
 
 \newcommand\ER[2]{\mathit{ER(#1, #2)}}
 
@@ -61,16 +62,21 @@ The following mathematical notations are used in the document to simplify the eq
 \newcommand\LMul[1]{\mathit{LMul(#1)}}
 \newcommand\AH[1]{\mathit{AH_{#1}}}
 \newcommand\BC[1]{\mathit{BC_{#1}}}
+\newcommand\SI[1]{\mathit{SI_{#1}}}
+\newcommand\BI[1]{\mathit{BI_{#1}}}
+\newcommand\uvTA[2]{\mathit{uvTA_{#1, #2}}}
+
 
 \newcommand\IND[2]{\mathit{Ind_{#1, #2}}}
 \newcommand\INDL[1]{\mathit{Indl_{#1}}}
 \newcommand\AI[1]{\mathit{AI_{#1}}}
+\newcommand\SIF[1]{\mathit{SIF_{#1}}}
 
 \begin{tabularx}{\linewidth}{|l X|}\hline
   $\M{T}$: & A market for tokens of type $T$. \\\hline
-  $vT$: & the vToken type of token. \\\hline
+  $\vT{T}$: & Type of vToken that have $T$ as an underlying token. \\\hline
 
-  $\ER{\T{1}}{\T{2}}$: & Exchange rate from the token $\T{1}$ to the token $\T{2}$, aka the $x$ in: $1\ \T{1} = (x \times 1)\ \T{2}$. \\\hline
+  $\ER{\T{1}}{\T{2}}$: & Exchange rate from the token $\T{1}$ to the token $\T{2}$, aka the $x$ in: $1\ \T{1} = x \T{2}$. \\\hline
 
   $\BA{m}$: & Borrowed amount of tokens in a market $m$. \\\hline
   $\C{m}$: & Amount of cash in a market $m$. \\\hline
@@ -89,10 +95,14 @@ The following mathematical notations are used in the document to simplify the eq
   $\LMul{T}$: & Liquidation multiplier of the market $m$. \\\hline
   $\AH{u}$: & User's account health. \\\hline
   $\BC{u}$: & User's borrowing capacity. \\\hline
+  $\SI{u}$: & User's supply information. \\\hline
+  $\BI{u}$: & User's borrowing information. \\\hline
+  $\uvTA{u}{T}$: & Amount of vTokens that a user $u$ owns which have as an underlying token $T$. \\\hline
 
   $\IND{m}{n}$: & $n$th interest rate index of the market $m$. \\\hline
   $\INDL{m}$: & Latest interest rate index of the market $m$. \\\hline
-  $\AI{m}$: & accumulated interest of the market $m$. \\\hline
+  $\SIF{m}$: & Simple interest factor of the market $m$. \\\hline
+  $\AI{m}$: & Accumulated interest of the market $m$. \\\hline
 
 \end{tabularx}
 \newpage
@@ -108,10 +118,10 @@ In this section we describe the functioning of the system.
 
 There are two kinds of clearly identifiable users:
 \begin{itemize}
-  \item The admin who is the deployer of (at least one of) the main contracts of the system like \verb|MarketAggregator|, \verb|WalletController| or \verb|Oracle|.
+  \item The admin who is the deployer of the main contracts of the system like \verb|MarketAggregator|, \verb|WalletController| or \verb|Oracle|.
   \item The ``normal'' users who interact with the system.
 \end{itemize}
-And there are four roles that can be taken by the users and which determine their permissions when it comes to interacting with the system: %refer to IRoles
+And there are four roles\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/utils/interfaces/IRoles.sol\#L13-L15}{From ``IRoles.sol'', Lines: 13-15.}} that can be taken by the users and which determine their permissions when it comes to interacting with the system:
 \begin{itemize}
   \item Owner: this is the role of the admin only. It gives them the right to modify all the parameters of the system.
   \item Upgrader: this role can be given to a user by the owner and it gives them the right to upgrades some contracts' codes.
@@ -138,17 +148,17 @@ To borrow a certain amount of some token:
 
 \begin{itemize}
   \item There have to be enough tokens in the market for the borrowing.
-  \item The borrowed amount has to be within the user's borrowing capacity, noted $BC_u$ with $u$ being the user.
+  \item The borrowed amount has to be within the user's borrowing capacity, noted $\BC{u}$ with $u$ being the user.
 \end{itemize}
 
-$BC_u$ represents the amount of vTokens that the user can still use as collateral to borrow. Once that amount is reached, the user can no longer perform any action that requires them to have free vTokens like borrowing or withdrawing.
+$\BC{u}$ represents the amount of vTokens that the user can still use as collateral to borrow. Once that amount is reached, the user can no longer perform any action that requires them to have free vTokens like borrowing or withdrawing.
 
 \subsubsection{Repay}
 
 A borrower can repay the amount they borrowed by returning it to the market. By doing that the collateral they set for the borrowing is freed and can be used to borrow other tokens.
 
 \subsubsection{Liquidate}
-
+% is the repetition necessary?
 When a user's account is unhealthy, aka ($AH_u < 1$), the liquidation of his debt becomes possible. The liquidation process consists of selling the borrower's collateral vTokens at a discount in exchange for the repayment of the borrower's debt or a portion of it.
 
 The purpose of this mecanism is to financially incentivize the liquidators to add liquidity to the system and pay other users' debts.
@@ -160,53 +170,57 @@ The purpose of this mecanism is to financially incentivize the liquidators to ad
 The values of interest rates increase when the demand is high and decrease when it is low. The calculation of the real interest requires some intermediary variables:
 
 \begin{itemize}
-  \item The utilisation ratio $\UR{m}$ for a market $m$:
+  \item The utilisation rate\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/libraries/MarketOperations.sol\#L16}{From ``MarketOperations.sol'', Line: 16.}} $\UR{m}$ for the market $m$:
   $$
     \UR{m} = \frac{ \BA{m} }{ \RTB{m} + \BA{m} }
   $$
-  The utilisation ratio unifies supply and borrowing demand into a single variable.
-  \item The borrowing interest rate:
+  The utilisation rate unifies supply and borrowing demand into a single variable.
+  \item The borrowing interest rate\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/libraries/MarketOperations.sol\#L18-L19}{From ``MarketOperations.sol'', Lines: 18-19.}} $\BIR{m}$ for the market $m$:
   $$
     \BIR{m} = \UR{m} * \UMul{m} + \UBR{m}
   $$ % in: MarketOperations.calculateBorrowInterestRate
+  \item the simple interest factor\footnote{\href{https://github.comdev/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L167}{From ``MarketOperations.sol'', Line: 167.}} $\SIF{m}$ for the market $m$:
+  $$
+    \SIF{m} = \BIR{m} \times \Delta t
+  $$
 \end{itemize}
-The accumulated interest can then be calculated as follows:
+The accumulated interest\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L171-L172}{From ``MarketOperations.sol'', Lines: 171-172.}} for the market $m$ can then be calculated as follows:
 $$
-  \AI{m} = \BA{m} \times \BIR{m} \times \Delta t
+  \AI{m} = \BA{m} \times \SIF{m}
 $$ % in: MarketsAggregator.finterestAccumulated
-with $\Delta t$ being the time difference in seconds between the current time and the last moment at which the interest rate was calculated.
+with $\Delta t$ being the time difference in seconds between the current time and the last moment at which the interest rate was calculated\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L160}{From ``MarketOperations.sol'', Line: 160.}}.
 
 \subsubsection{Interest rate indexes}
 
-Each time the interest rate is calculated in a certain market, the interest rate index associated to that market is updated. New indexes are calculated as follows:
+Each time the interest rate is calculated in a certain market, the interest rate index associated to that market is updated. New indexes are calculated\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L165-L170}{From ``MarketsAggregator.sol'', Lines: 165-170.}} as follows:
 $$
-\IND{m}{n} = (\BIR{m} \times \Delta t + 1) \times\IND{m}{n-1}
+\IND{m}{n} = (\SIF{m} + 1) \times\IND{m}{n-1}
 $$
-With $\IND{m}{0} = 1$.
+With\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L330}{From ``MarketsAggregator.sol'', Line: 330.}}: $\IND{m}{0} = 1$.
 
 \subsubsection{Reserves}
 
-When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve, the rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding $(\AI{m} \times \RF{m})$ to it.
+When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve, the rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/MarketsAggregator.sol\#L173-L175}{From ``MarketsAggregator.sol'', Lines: 173-175.}} $(\AI{m} \times \RF{m})$ to it.
 
 The purpose of the reserves is to protect a portion of the lenders interest so that they don't lose everything in case of liquidation, only their cash can be liquidated. %reference code
 
 \subsubsection{vToken exchange rate calculation}
 
-As stated previously the exchange rates from vTokens to real tokens depend on the supply and borrowing demand of those tokens. It is calculated as follows:
+As stated previously the exchange rates from vTokens to real tokens depend on the supply and borrowing demand of those tokens. It is calculated\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/Market/libraries/MarketOperations.sol\#L24-L26}{From ``MarketOperations.sol'', Lines: 24-26.}} as follows:
 
 $$
-  \ER{vT}{T} = \frac{\RTB{\M{T}} + \BA{m} - \RES{\M{T}}}{\VTB{\M{T}}}
+  \ER{\vT{T}}{T} = \frac{\RTB{\M{T}} + \BA{m} - \RES{\M{T}}}{\VTB{\M{T}}}
 $$
 
 \subsubsection{Account health and borrow capacity calculation}
 
 A user $u$'s account health determines whether or not it is liquidable, if $AH_u < 1$ then it is otherwise it isn't. If the user's account is liquidable then the user can't withdraw their tokens or borrow more tokens before some other users liquidiates them or they supply more tokens to the market to improve their account's health. The account's health is calculated whenever the user tries to perform any market operation or gets one of his loans liquidated.
 
-\noindent Given:
+\noindent Given\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/interfaces/IModule.sol\#L203-L207}{From ``IModule.sol'', Lines: 203-207.}}:
 $$
-  sval(T, vTsa) = \frac{vTsa \times \ER{vT}{T}}{\ER{T}{\USD}} \times \CF{T}
+  sval(T, vTA) = \frac{vTA \times \ER{\vT{T}}{T}}{\ER{T}{\USD}} \times \CF{T}
 $$
-and
+and\footnote{\href{https://github.dev/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/interfaces/IModule.sol\#L215-L226}{From ``IModule.sol'', Lines: 215-226.}}:
 $$
   bval(\M{T}, ba, ind) =\begin{dcases}
     0 & ba = 0\\
@@ -216,44 +230,44 @@ $$
 $$
 Where $\CF{T}$ is the collateral factor for the market of the tokens $T$. It is a value that is set by the adminitrator and which determines by how much the collateral has to be bigger than the borrowed amout.
 
-The account health is then calculated as follows:
+The account health\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/interfaces/IModule.sol\#L187-L227}{From ``IModule.sol'', Lines: 187-227.}} is then calculated as follows:
 $$
   AH_u =
     \frac {
-      \sum_{(T_i, vTsa) \in SI_u}
-        sval(T_i, vTsa)
+      \sum_{(\T{i}, \uvTA{u}{\T{i}}) \in \SI{u}}
+        sval(\T{i}, \uvTA{u}{\T{i}})
     } {
-      \sum_{(\M{T_j}, ba, ind) \in BI_u}
-      bval(\M{T_j}, ba, ind)
+      \sum_{(\M{\T{j}}, ba, ind) \in \BI{u}}
+      bval(\M{\T{j}}, ba, ind)
     }
 $$
 Where:
 \begin{itemize}
-  \item $SI_u$: The supply information of the user $u$, which we represent as a collection of couples $(m_{T_i}, vTsa_i)$ with:
+  \item $\SI{u}$: The supply information of the user $u$, which we represent as a collection of couples $(\M{\T{i}}, \uvTA{u}{\T{i}})$ with:
   \begin{itemize}
-    \item $T_i$: the kind of the supplied token;
-    \item $vTsa_i$: the amount of vTokens that the user got from the supply.
+    \item $\T{i}$: the kind of the supplied token;
+    \item $\uvTA{u}{\T{i}}$: the amount of vTokens that the user got from the supplying tokens of the type $\T{i}$.
   \end{itemize}
-  \item $BI_u$: The borrow information of the user $u$, which we represent as a collection of triplets $(m_{T_j}, ba, ind)$ with:
+  \item $\BI{u}$: The borrow information of the user $u$, which we represent as a collection of triplets $(m_{T_j}, ba, ind)$ with:
   \begin{itemize}
-    \item $T_j$: the kind of the borrowed token;
+    \item $\T{j}$: the kind of the borrowed token;
     \item $ba$: the amount that was borrowed;
     \item $ind$: the value of the interest rate index when the borrowing occured.
   \end{itemize}
 \end{itemize}
 
-A user's borrowing capacity is a value in USD that determines how many vTokens a user can use as collateral or redeem, the limit being that the vToken's worth has to be less that the user's borrowing capacity. The borrowing capacity is calculated as follows:
+A user's borrowing capacity\footnote{\href{https://github.com/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/BorrowModule.sol\#L98}{From ``BorrowModule.sol'', Line: 98.}} is a value in USD that determines how many vTokens a user can use as collateral or redeem, the limit being that the vToken's worth has to be less that the user's borrowing capacity. The borrowing capacity is calculated as follows:
 $$
-  BC = (\sum_{(m_{T_i}, vTsa) \in SI_u} sval(T_i, vTsa)) - (\sum_{(m_{T_j}, ba, ind) \in BI_u} bval(m_{T_j}, ba, ind))
+  \BC{u} = (\sum_{(m_{\T{i}}, \uvTA{u}{\T{i}}) \in \SI{u}} sval(\T{i}, \uvTA{u}{\T{i}})) - (\sum_{(m_{T_j}, ba, ind) \in \BI{u}} bval(m_{T_j}, ba, ind))
 $$
 
 \subsubsection{Liquidation}
 
-The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{\M{T}}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $R_T$ of a borrower's debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get $vTA$ is calculated as follows:
+The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{\M{T}}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $R_T$ of a borrower $lu$'s debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get $vTA$ is calculated\footnote{\href{https://github.dev/SVOIcom/everscalend-contracts/blob/8d24e268f9c44bd3e896fb6a28bbf8a42c7027a9/smart-contracts/src/ModulesForMarket/LiquidationModule.sol\#L118-L126}{From ``LiquidationModule.sol'', Lines: 118-126.}} as follows:
 $$
-  vTA = R_T \times \ER{T}{vT} \times \LMul{\M{T}}
+  vTA = min(R_T \times \ER{T}{\vT{T}} \times \LMul{\M{T}}, \uvTA{lu}{T})
 $$
-The value of the liqudation multiplier is set manually by the admin.
+Where $min$ is a function that returns the minimum of two values. The value of the liqudation multiplier is set manually by the admin.
 
 \subsubsection{Module locking mecanism}
 
