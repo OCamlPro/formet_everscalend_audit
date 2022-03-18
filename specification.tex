@@ -13,8 +13,6 @@ Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system imple
 
   Interest rate & The rate of profit that is generated for the suppliers of tokens. The interest rates in Everscalend are algorithmically calculated and they increase when the borrowing demand increases and decrease when it decreases. \\\hline
 
-  Reserve factor & Ranging from 0 to 1, it represents the portion of the interest rate that should be stored in the reserve whenever it is acquired. \\\hline
-
   Market & A pool of tokens of the same kind where all the tokens supplied by the users are stored. It also holds information like the exchange rate and reserve factor etc. \\\hline
 
   vToken & A virtual token, it is a currency that only exists on Everscalend and it is used to determine the amount of tokens that a supplier owns in a market. vTokens are acquired by the users when they supply some tokens to the market. When interest rate is accumulated on the supplied tokens to the market, the exchange rate from the vTokens to the real tokens increases to account for the accumulated interest that the suppliers will get to retrieve when they withdraw their tokens. \\\hline
@@ -29,6 +27,10 @@ Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system imple
 
   Liquidation Multiplier & A value superior to 1. It is the amount by which the amount of vTokens that the liquidator should get by market price is multiplied to increase the amount they really get. \\\hline
 
+  Reserve factor & Ranging from 0 to 1, it represents the portion of the interest rate that should be stored in the reserve whenever it is acquired. \\\hline
+
+  Reserve & A protected portion of the accumulated interest rate on the supplied tokens. It serve as a protection of the suppliers in case they do some borrowing and become liquidable. The liquidators will only be able to take the tokens that aren't part of the reserve (Which is referred to as the cash). \\\hline
+
   Index & Refers to the interest rate index, which is a value that captures the history of interest rates of a market. It is updated after each transaction to compound the interest since the previous index. \\\hline
 \end{tabularx}
 
@@ -39,70 +41,82 @@ The following mathematical notations are used in the document to simplify the eq
 
 \newcommand\USD{\mathit{USD}}
 
-\newcommand\M[1]{\mathit{m_{#1}}}
-\newcommand\T[1]{\mathit{T(#1)}}
+\newcommand\T[1]{\mathit{T_{#1}}}
 \newcommand\vT[1]{\mathit{vT(#1)}}
 
 \newcommand\ER[2]{\mathit{ER(#1, #2)}}
 
-\newcommand\BA[1]{\mathit{Ba(#1)}}
+\newcommand\TBA[1]{\mathit{TBA(#1)}}
 \newcommand\C[1]{\mathit{C(#1)}}
 
 \newcommand\UR[1]{\mathit{UR(#1)}}
 \newcommand\UMul[1]{\mathit{UM(#1)}}
 \newcommand\UBR[1]{\mathit{UbR(#1)}}
 \newcommand\BIR[1]{\mathit{BIR(#1)}}
-\newcommand\RF[1]{\mathit{RF_{#1}}}
+\newcommand\RF[1]{\mathit{RF(#1)}}
 
 \newcommand\RTB[1]{\mathit{rTB(#1)}}
-\newcommand\VTB[1]{\mathit{vTB_{#1}}}
-\newcommand\RES[1]{\mathit{Res_{#1}}}
+\newcommand\VTB[1]{\mathit{vTB(#1)}}
+\newcommand\RES[1]{\mathit{Res(#1)}}
 
 \newcommand\CF[1]{\mathit{CF(#1)}}
 \newcommand\LMul[1]{\mathit{LMul(#1)}}
-\newcommand\AH[1]{\mathit{AH_{#1}}}
-\newcommand\BC[1]{\mathit{BC_{#1}}}
-\newcommand\SI[1]{\mathit{SI_{#1}}}
-\newcommand\BI[1]{\mathit{BI_{#1}}}
-\newcommand\uvTA[2]{\mathit{uvTA_{#1, #2}}}
+\newcommand\AH[1]{\mathit{AH(#1)}}
+\newcommand\BC[1]{\mathit{BC(#1)}}
 
+\newcommand\SI[1]{\mathit{SI(#1)}}
+\newcommand\BI[1]{\mathit{BI(#1)}}
 
-\newcommand\IND[2]{\mathit{Ind_{#1, #2}}}
-\newcommand\INDL[1]{\mathit{Indl_{#1}}}
-\newcommand\AI[1]{\mathit{AI_{#1}}}
-\newcommand\SIF[1]{\mathit{SIF_{#1}}}
+\newcommand\USA[2]{\mathit{USA(#1, #2)}}
+\newcommand\UBA[2]{\mathit{USA(#1, #2)}}
+
+\newcommand\TSAV[1]{\mathit{TSAV(#1)}}
+\newcommand\TBAV[1]{\mathit{TBAV(#1)}}
+\newcommand\uvTA[2]{\mathit{uvTA(#1, #2)}}
+
+\newcommand\IND[2]{\mathit{Ind(#1, #2)}}
+\newcommand\INDL[1]{\mathit{Indl(#1)}}
+\newcommand\AI[1]{\mathit{AI(#1)}}
+\newcommand\SIF[1]{\mathit{SIF(#1)}}
 
 \begin{tabularx}{\linewidth}{|l X|}\hline
-  $\M{T}$: & A market for tokens of type $T$. \\\hline
   $\vT{T}$: & Type of vToken that have $T$ as an underlying token. \\\hline
 
   $\ER{\T{1}}{\T{2}}$: & Exchange rate from the token $\T{1}$ to the token $\T{2}$, aka the $x$ in: $1\ \T{1} = x \T{2}$. \\\hline
 
-  $\BA{m}$: & Borrowed amount of tokens in a market $m$. \\\hline
-  $\C{m}$: & Amount of cash in a market $m$. \\\hline
+  $\TBA{T}$: & The amount of borrowed tokens in then market of the token $T$. \\\hline
+  $\C{T}$: & Amount of cash in the market of the token $T$. \\\hline
 
-  $\UR{m}$: & Utilization ratio of the market $m$. \\\hline
-  $\UMul{m}$: & Utilization multiplier of the market $m$. \\\hline
-  $\UBR{m}$: & Utilization base rate of the market $m$. \\\hline
-  $\BIR{m}$: & Borrowing interest rate of the market $m$. \\\hline
-  $\RF{m}$: & Reserve factor of the market $m$. \\\hline
+  $\UR{T}$: & Utilization ratio of the market of the token $T$ \\\hline
+  $\UMul{T}$: & Utilization multiplier of the market of the token $T$. \\\hline
+  $\UBR{T}$: & Utilization base rate of the market of the token $T$. \\\hline
+  $\BIR{T}$: & Borrowing interest rate of the market of the token $T$. \\\hline
+  $\RF{T}$: & Reserve factor of the market of the token $T$. \\\hline
 
-  $\RTB{m}$: & Real token balance of the market $m$. \\\hline
-  $\VTB{m}$: & vToken balance of the market $m$. \\\hline
-  $\RES{m}$: & Amount of tokens stored in the reserves of the market $m$. \\\hline
+  $\RTB{T}$: & Real token balance of the market of the token $T$. \\\hline
+  $\VTB{T}$: & vToken balance of the market of the token $T$. \\\hline
+  $\RES{T}$: & Amount of tokens stored in the reserves of the market of the token $T$. \\\hline
 
   $\CF{T}$: & Collateral factor for a token T. \\\hline
-  $\LMul{T}$: & Liquidation multiplier of the market $m$. \\\hline
-  $\AH{u}$: & User's account health. \\\hline
-  $\BC{u}$: & User's borrowing capacity. \\\hline
-  $\SI{u}$: & User's supply information. \\\hline
-  $\BI{u}$: & User's borrowing information. \\\hline
+  $\LMul{T}$: & Liquidation multiplier of the market of the token $T$. \\\hline
+  $\AH{u}$: & A user $u$'s account health. \\\hline
+  $\BC{u}$: & A user $u$'s borrowing capacity. \\\hline
+  
+  $\SI{u}$: & A user $u$'s supply information. \\\hline
+  $\BI{u}$: & A user $u$'s borrowing information. \\\hline
+  
+  $\USA{u}{T}$: & A user $u$'s supplied amount of tokens of type $T$. \\\hline
+  $\UBA{u}{T}$: & A user $u$'s borrowed amount of tokens of type $T$. \\\hline
+  
+  $\TSAV{u}:$ & Value in USD of a user $u$'s total supplied amount. \\\hline
+  $\TBAV{u}:$ & Value in USD of a user $u$'s total borrowed amount. \\\hline
   $\uvTA{u}{T}$: & Amount of vTokens that a user $u$ owns which have as an underlying token $T$. \\\hline
 
-  $\IND{m}{n}$: & $n$th interest rate index of the market $m$. \\\hline
-  $\INDL{m}$: & Latest interest rate index of the market $m$. \\\hline
-  $\SIF{m}$: & Simple interest factor of the market $m$. \\\hline
-  $\AI{m}$: & Accumulated interest of the market $m$. \\\hline
+
+  $\IND{T}{n}$: & $n$th interest rate index of the market of the token $T$. \\\hline
+  $\INDL{T}$: & Latest interest rate index of the market of the token $T$. \\\hline
+  $\SIF{T}$: & Simple interest factor of the market of the token $T$. \\\hline
+  $\AI{T}$: & Accumulated interest of the market of the token $T$. \\\hline
 
 \end{tabularx}
 \newpage
@@ -159,7 +173,7 @@ A borrower can repay the amount they borrowed by returning it to the market. By 
 
 \subsubsection{Liquidate}
 % is the repetition necessary?
-When a user's account is unhealthy, aka ($AH_u < 1$), the liquidation of his debt becomes possible. The liquidation process consists of selling the borrower's collateral vTokens at a discount in exchange for the repayment of the borrower's debt or a portion of it.
+When a user's account is unhealthy, aka ($\AH{u} < 1$), the liquidation of his debt becomes possible. The liquidation process consists of selling the borrower's collateral vTokens at a discount in exchange for the repayment of the borrower's debt or a portion of it.
 
 The purpose of this mecanism is to financially incentivize the liquidators to add liquidity to the system and pay other users' debts.
 
@@ -170,23 +184,23 @@ The purpose of this mecanism is to financially incentivize the liquidators to ad
 The values of interest rates increase when the demand is high and decrease when it is low. The calculation of the real interest requires some intermediary variables:
 
 \begin{itemize}
-  \item The utilisation rate $\UR{m}$ for the market $m$:
+  \item The utilisation rate $\UR{T}$ for the market of the token $T$:
   $$
-    \UR{m} = \frac{ \BA{m} }{ \RTB{m} + \BA{m} }
+    \UR{T} = \frac{ \TBA{T} }{ \RTB{T} + \TBA{T} }
   $$
   The utilisation rate unifies supply and borrowing demand into a single variable.
-  \item The borrowing interest rate $\BIR{m}$ for the market $m$:
+  \item The borrowing interest rate $\BIR{T}$ for the market of the token $T$:
   $$
-    \BIR{m} = \UR{m} * \UMul{m} + \UBR{m}
+    \BIR{T} = \UR{T} * \UMul{T} + \UBR{T}
   $$ % in: MarketOperations.calculateBorrowInterestRate
-  \item the simple interest factor $\SIF{m}$ for the market $m$:
+  \item the simple interest factor $\SIF{T}$ for the market of the token $T$:
   $$
-    \SIF{m} = \BIR{m} \times \Delta t
+    \SIF{T} = \BIR{T} \times \Delta t
   $$
 \end{itemize}
-The accumulated interest for the market $m$ can then be calculated as follows:
+The accumulated interest for the market of the token $T$ can then be calculated as follows:
 $$
-  \AI{m} = \BA{m} \times \SIF{m}
+  \AI{T} = \TBA{T} \times \SIF{T}
 $$ % in: MarketsAggregator.finterestAccumulated
 with $\Delta t$ being the time difference in seconds between the current time and the last moment at which the interest rate was calculated.
 
@@ -194,13 +208,13 @@ with $\Delta t$ being the time difference in seconds between the current time an
 
 Each time the interest rate is calculated in a certain market, the interest rate index associated to that market is updated. New indexes are calculated as follows:
 $$
-\IND{m}{n} = (\SIF{m} + 1) \times\IND{m}{n-1}
+\IND{T}{n} = (\SIF{T} + 1) \times\IND{T}{n-1}
 $$
-With: $\IND{m}{0} = 1$.
+With: $\IND{T}{0} = 1$.
 
 \subsubsection{Reserves}
 
-When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve, the rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding $(\AI{m} \times \RF{m})$ to it.
+When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve, the rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding $(\AI{T} \times \RF{T})$ to it.
 
 The purpose of the reserves is to protect a portion of the lenders interest so that they don't lose everything in case of liquidation, only their cash can be liquidated. %reference code
 
@@ -209,63 +223,48 @@ The purpose of the reserves is to protect a portion of the lenders interest so t
 As stated previously the exchange rates from vTokens to real tokens depend on the supply and borrowing demand of those tokens. It is calculated as follows:
 
 $$
-  \ER{\vT{T}}{T} = \frac{\RTB{\M{T}} + \BA{m} - \RES{\M{T}}}{\VTB{\M{T}}}
+  \ER{\vT{T}}{T} = \frac{\RTB{T} + \TBA{T} - \RES{T}}{\VTB{T}}
 $$
 
 \subsubsection{Account health and borrow capacity calculation}
 
-A user $u$'s account health determines whether or not it is liquidable, if $AH_u < 1$ then it is otherwise it isn't. If the user's account is liquidable then the user can't withdraw their tokens or borrow more tokens before some other users liquidiates them or they supply more tokens to the market to improve their account's health. The account's health is calculated whenever the user tries to perform any market operation or gets one of his loans liquidated.
+A user $u$'s account health $\AH{u}$ determines whether or not it is liquidable, if $\AH{u} < 1$ then it is otherwise it isn't. If the user's account is liquidable then the user can't withdraw their tokens or borrow more tokens before some other users liquidiates their debt or they supply more tokens to the market to improve their account's health. The account's health is calculated whenever the user tries to perform any market operation or gets one of his loans liquidated.
 
-\noindent Given:
+Calculating $\AH{u}$, first requires the calculation of The value of the user $u$'s supplied amount $\TSAV{u}$ and the value of his borrowed amount $\TBAV{u}$ as follows:
 $$
-  sval(T, vTA) = \frac{vTA \times \ER{\vT{T}}{T}}{\ER{T}{\USD}} \times \CF{T}
+  \TSAV{u} = \sum_{T} \frac{\uvTA{u}{T} \times \ER{\vT{T}}{T}}{\ER{T}{\USD}} \times \CF{T}
 $$
-and:
+And
 $$
-  bval(\M{T}, ba, ind) =\begin{dcases}
-    0 & ba = 0\\
-    \frac{(ba \times ind)/ \INDL{\M{T}}}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{\M{T}} \neq ind \\
-    \frac{ba}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{\M{T}} = ind
-    \end{dcases}
+  \TBAV{u} = \sum_{(T, ba, ind) \in \BI{u}} bval(T, ba, ind)
 $$
-Where $\CF{T}$ is the collateral factor for the market of the tokens $T$. It is a value that is set by the adminitrator and which determines by how much the collateral has to be bigger than the borrowed amout.
+With: 
+$$
+bval(T, ba, ind) = 
+\begin{dcases}
+  0 & ba = 0\\
+  \frac{(ba \times ind)/ \INDL{T}}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{T} \neq ind \\
+  \frac{ba}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{T} = ind
+\end{dcases}
+$$
+Where $\BI{u}$ is the borrow information for the user $u$, which is in the form of a collection of triplets containing the type of the borrowed token, the amount that was borrowed and the interest rate index at the moment of the borrowing. 
 
-The account health is then calculated as follows:
+The user's account health is then calculated as follows:
 $$
-  AH_u =
-    \frac {
-      \sum_{(\T{i}, \uvTA{u}{\T{i}}) \in \SI{u}}
-        sval(\T{i}, \uvTA{u}{\T{i}})
-    } {
-      \sum_{(\M{\T{j}}, ba, ind) \in \BI{u}}
-      bval(\M{\T{j}}, ba, ind)
-    }
+  \AH{u} = \frac{\TSAV{u}}{\TBAV{u}}
 $$
-Where:
-\begin{itemize}
-  \item $\SI{u}$: The supply information of the user $u$, which we represent as a collection of couples $(\M{\T{i}}, \uvTA{u}{\T{i}})$ with:
-  \begin{itemize}
-    \item $\T{i}$: the kind of the supplied token;
-    \item $\uvTA{u}{\T{i}}$: the amount of vTokens that the user got from the supplying tokens of the type $\T{i}$.
-  \end{itemize}
-  \item $\BI{u}$: The borrow information of the user $u$, which we represent as a collection of triplets $(m_{T_j}, ba, ind)$ with:
-  \begin{itemize}
-    \item $\T{j}$: the kind of the borrowed token;
-    \item $ba$: the amount that was borrowed;
-    \item $ind$: the value of the interest rate index when the borrowing occured.
-  \end{itemize}
-\end{itemize}
+
 
 A user's borrowing capacity is a value in USD that determines how many vTokens a user can use as collateral or redeem, the limit being that the vToken's worth has to be less that the user's borrowing capacity. The borrowing capacity is calculated as follows:
 $$
-  \BC{u} = (\sum_{(m_{\T{i}}, \uvTA{u}{\T{i}}) \in \SI{u}} sval(\T{i}, \uvTA{u}{\T{i}})) - (\sum_{(m_{T_j}, ba, ind) \in \BI{u}} bval(m_{T_j}, ba, ind))
+  \BC{u} = \TSAV{u} - \TBAV{u}
 $$
 
 \subsubsection{Liquidation}
 
-The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{\M{T}}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $R_T$ of a borrower $lu$'s debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get $vTA$ is calculated as follows:
+The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{T}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $\mathit{RP}$ of a borrower $u$'s debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get $vTA$ is calculated as follows:
 $$
-  vTA = min(R_T \times \ER{T}{\vT{T}} \times \LMul{\M{T}}, \uvTA{lu}{T})
+  vTA = min(\mathit{RP} \times \ER{T}{\vT{T}} \times \LMul{T}, \uvTA{u}{T})
 $$
 Where $min$ is a function that returns the minimum of two values. The value of the liqudation multiplier is set manually by the admin.
 
@@ -278,7 +277,7 @@ Such locks are used in:
   \item \verb|BorrowModule|: The lock prevents other users from borrowing at the same time.
   \item \verb|LiquidationModule|: In this case the lock is on the liquidated user, the purpose is to prevent more than one user liquidating the same user's debt.
   \item \verb|WithdrawModule|: To prevent other users from withdrawing while one of them has started that process.
-  \item \verb|UserAccount|: This conract uses two locks called \verb|borrowLock| and \\\verb|liquidationLock|. As their names suggest, \verb|borrowLock| locks the user's account during the processing of a borrow request, stopping the user from doing another one before the current one is finished. The \\\verb|liquidationLock| stops the user from withdarwing or borrowing while he is being liquidated.
+  \item \verb|UserAccount|: This conract uses two locks called \verb|borrowLock| and \verb|liquidationLock|. As their names suggest, \verb|borrowLock| locks the user's account during the processing of a borrow request, stopping the user from doing another one before the current one is finished. The \verb|liquidationLock| stops the user from withdarwing or borrowing while he is being liquidated.
 \end{itemize}
 
 \section{Architecture of the System}
@@ -422,29 +421,29 @@ We start with a "sub-scenario" which is the one of updating the user's account h
 
 \begin{enumerate}
   \item \verb|UAM.calculateUserAccountHealth| is called from |UA| with a payload.
-  \item \verb|UAM.calculateUserAccountHealth| calls \\\verb|MA.calculateUserAccountHealth| which:
+  \item \verb|UAM.calculateUserAccountHealth| calls \verb|MA.calculateUserAccountHealth| which:
   \begin{enumerate}[label*=\arabic*.]
     \item Updates the markets' information and calculates the user's account health.
     \item If the user's account is unhealthy a \verb|LiquidationPossible| event is emitted.
     \item A call is made to \verb|UAM.updateUserAccountHealth| with the new account health.
   \end{enumerate}
-  \item \verb|UAM.updateUserAccountHealth| calls \verb|UA.updateUserAccountHealth| \\which calls, depending on the operation code provided in the payload, either \verb|UAM.requestTokenPayout|, \verb|UAM.returnAndSupply| or transfers the remaining gas to a povided address.
+  \item \verb|UAM.updateUserAccountHealth| calls \verb|UA.updateUserAccountHealth| which calls, depending on the operation code provided in the payload, either \verb|UAM.requestTokenPayout|, \\\verb|UAM.returnAndSupply| or transfers the remaining gas to a povided address.
 \end{enumerate}
 
 \subsection{Supply}
 \begin{enumerate}
   \item The user makes an internal transfer through \verb|TTK.internalTransfer| with a payload containing the supply operation code.
   \item The payload with information about the token wallet is passed to \\\verb|WC.tokensReceivedCallback|.
-  \item The payload is decoded and after checking the operation code a call is made to \verb|MA.performOperationWalletController| with the necessary information about the supply operation.
-  \item \verb|MA.performOperationWalletController| calls the Oracle to request the newest token prices, the response is receive with \\\verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
+  \item The payload is decoded and after checking the operation code a call is made to \\\verb|MA.performOperationWalletController| with the necessary information about the supply operation.
+  \item \verb|MA.performOperationWalletController| calls the Oracle to request the newest token prices, the response is receive with \verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
   \item \verb|MA.performOperation| calls \verb|SM.performAction| which:
   \begin{enumerate}[label*=\arabic*.]
     \item Calculates the amount of vTokens to provide the user.
     \item Builds a data structure with the changes to the market (market delta) to which the supply was made.
   \end{enumerate}
   \item The market delta is sent to \verb|MA.receiveCacheDelta| which updates market informations and calls \verb|SM.resumeOperation| with the new market information.
-  \item The information about the supply operation is then sent to \\\verb|UAM.writeSupplyInfo| which transfers it to \verb|UA.writeSupplyInfo|.
-  \item \verb|UA.writeSupplyInfo| calls \verb|UAM.calculateUserAccountHealth| with a \\payload having the \verb|NO_OP| operation code.
+  \item The information about the supply operation is then sent to \verb|UAM.writeSupplyInfo| which transfers it to \verb|UA.writeSupplyInfo|.
+  \item \verb|UA.writeSupplyInfo| calls \verb|UAM.calculateUserAccountHealth| with a payload having the \verb|NO_OP| operation code.
   \item After updating account health, the remaining gas is transferred back to the supplier.
 \end{enumerate}
 
@@ -453,9 +452,9 @@ We start with a "sub-scenario" which is the one of updating the user's account h
   \item The user calls \verb|UA.withdraw| with the address of their TIP-3 wallet, the ID of the market to which their supplied their tokens and the amount their wish to withdraw.
   \item \verb|UA.withdraw| calls \verb|UAM.requestWithdraw| with the withdrawal information.
   \item \verb|UAM.requestWithdraw| calls \verb|MA.performOperationUserAccountManager| with the withdraw operation code.
-  \item \verb|MA.performOperationUserAccountManager| calls the Oracle to request the newest token prices, the response is receive with \\\verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
+  \item \verb|MA.performOperationUserAccountManager| calls the Oracle to request the newest token prices, the response is receive with \verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
   \item \verb|MA.performOperation| calls \verb|WM.performAction|.
-  \item \verb|WM.performAction| locks the module \verb|WM| and requests from \verb|UAM| the user's borrow and supply information which is provided by \verb|UA| and goes through \verb|UAM.receiveWithdrawInfo| which sends it to \\\verb|WM.withdrawTokensFromMarket|.
+  \item \verb|WM.performAction| locks the module \verb|WM| and requests from \verb|UAM| the user's borrow and supply information which is provided by \verb|UA| and goes through \verb|UAM.receiveWithdrawInfo| which sends it to \verb|WM.withdrawTokensFromMarket|.
   \item \verb|WM.withdrawTokensFromMarket| checks that:
   \begin{itemize}
     \item The user's account is healthy.
@@ -463,15 +462,15 @@ We start with a "sub-scenario" which is the one of updating the user's account h
     \item The worth in USD of the user's free collateral is equal or greater than the worth in USD of the amount of tokens they wish to withdraw.
   \end{itemize}
   Then calls \verb|MA.receiveCacheDelta| with the withdrawal information.
-  \item \verb|MA.receiveCacheDelta| updates market information and calls \\\verb|WM.resumeOperation| with the new market information.
-  \item \verb|WM.resumeOperation| unlocks the module \verb|WM| and sends the withdrawing information to \verb|UAM.writeWithdrawInfo| \\which calls \verb|UA.writeWithdrawInfo| which:
+  \item \verb|MA.receiveCacheDelta| updates market information and calls \verb|WM.resumeOperation| with the new market information.
+  \item \verb|WM.resumeOperation| unlocks the module \verb|WM| and sends the withdrawing information to \verb|UAM.writeWithdrawInfo| which calls \verb|UA.writeWithdrawInfo| which:
   \begin{enumerate}[label*=\arabic*.]
     \item updates the user's supply information by decreasing it with the withdrawn amount.
-    \item builds a payload with the amount of tokens that need to be sent, the user's TIP-3 wallet address and the opeartion code \\\verb|REQUEST_TOKEN_PAYOUT|.
+    \item builds a payload with the amount of tokens that need to be sent, the user's TIP-3 wallet address and the opeartion code \verb|REQUEST_TOKEN_PAYOUT|.
   \end{enumerate}
   \item A call is made to \verb|UAM.calculateUserAccountHealth| with the user's new supply and borrow information.
-  \item After the user's account health is updated, \verb|UAM.returnAndSupply| is \\called.
-  \item \verb|UAM.returnAndSupply| calls \verb|MA.requestTokenPayout| and \verb|WM.unlock| \\(which does nothing because the module was unlocked during the call to \verb|WM.resumeOperation|).
+  \item After the user's account health is updated, \verb|UAM.returnAndSupply| is called.
+  \item \verb|UAM.returnAndSupply| calls \verb|MA.requestTokenPayout| and \verb|WM.unlock| (which does nothing because the module was unlocked during the call to \verb|WM.resumeOperation|).
   \item \verb|MA.requestTokenPayout| calls \verb|WC.transferTokensToWallet| which calls \verb|WC.transfer|.
   \item \verb|WC.transfer| calls \verb|TTK.internalTransfer| which updates the user's balance with the amount of tokens that he requested to withdraw.
 \end{enumerate}
@@ -480,11 +479,11 @@ We start with a "sub-scenario" which is the one of updating the user's account h
 \begin{enumerate}
   \item The user calls \verb|UA.borrow| with the address of their TIP-3 wallet, the ID of the market from which they wish to borrow and the amount of tokens they wish to borrow.
   \item \verb|UA.borrow| locks the user account and calls \verb|UAM.requestIndexUpdate| with the borrowing information.
-  \item \verb|UAM.requestIndexUpdate| calls \\\verb|MA.performOperationUserAccountManager| with the \verb|BORROW_TOKENS| operation code.
-  \item \verb|MA.performOperationUserAccountManager| calls the Oracle to request the newest token prices, the response is receive with \\\verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
+  \item \verb|UAM.requestIndexUpdate| calls \verb|MA.performOperationUserAccountManager| with the \\\verb|BORROW_TOKENS| operation code.
+  \item \verb|MA.performOperationUserAccountManager| calls the Oracle to request the newest token prices, the response is receive with \verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
   \item \verb|MA.performOperation| calls \verb|BM.performAction|.
   \item \verb|BM.performAction| locks the module \verb|BM| and requests from \verb|UAM| to update the market's indexes which is done by calling \verb|UA.borrowUpdateIndexes|.
-  \item \verb|UA.borrowUpdateIndexes| gets from the markets the updates indexes and passes them along with the user's borrow and supply into to \\\verb|UAM.passBorrowInformation| which calls \verb|BM.borrowTokensFromMarket|.
+  \item \verb|UA.borrowUpdateIndexes| gets from the markets the updates indexes and passes them along with the user's borrow and supply into to \verb|UAM.passBorrowInformation| which calls \verb|BM.borrowTokensFromMarket|.
   \item \verb|BM.borrowTokensFromMarket| checks that:
   \begin{itemize}
     \item That there are enough tokens in the market for the borrowing.
@@ -493,8 +492,8 @@ We start with a "sub-scenario" which is the one of updating the user's account h
   \end{itemize}
   \item A \verb|TokenBorrow| event is emitted with the borrowing information.
   \item \verb|BM.borrowTokensFromMarket| calls \verb|MA.receiveCacheDelta| with the borrowing information and the information about the changes to the market after the borrowing.
-  \item \verb|MA.receiveCacheDelta| updates the market information and calls \\\verb|BM.resumeOperation| with the new market information.
-  \item \verb|BM.resumeOperation| unlocks the module \verb|BM| and sends the borrowing information to \verb|UAM.writeBorrowInformation| which calls \\\verb|UA.writeBorrowInformation| which:
+  \item \verb|MA.receiveCacheDelta| updates the market information and calls \verb|BM.resumeOperation| with the new market information.
+  \item \verb|BM.resumeOperation| unlocks the module \verb|BM| and sends the borrowing information to \verb|UAM.writeBorrowInformation| which calls \verb|UA.writeBorrowInformation| which:
   \begin{enumerate}[label*=\arabic*.]
     \item Updates market information and the user's borrowing information.
     \item Unlocks \verb|UA|.
@@ -509,14 +508,14 @@ We start with a "sub-scenario" which is the one of updating the user's account h
 \subsection{Repay}
 \begin{enumerate}
   \item The user makes an internal transfer through \verb|TTK.internalTransfer| with a payload containing the repay operation code.
-  \item The payload with information about the token wallet is passed to \\\verb|WC.tokensReceivedCallback|.
-  \item The payload is decoded and after checking the operation code a call is made to \verb|MA.performOperationWalletController| with the necessary information about the supply operation.
-  \item \verb|MA.performOperationWalletController| calls the Oracle to request the newest token prices, the response is receive with \\\verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
-  \item \verb|MA.performOperation| calls \verb|RM.performAction| which calls \\\verb|UAM.requestRepayInfo|.
+  \item The payload with information about the token wallet is passed to \verb|WC.tokensReceivedCallback|.
+  \item The payload is decoded and after checking the operation code a call is made to \\\verb|MA.performOperationWalletController| with the necessary information about the supply operation.
+  \item \verb|MA.performOperationWalletController| calls the Oracle to request the newest token prices, the response is receive with \verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
+  \item \verb|MA.performOperation| calls \verb|RM.performAction| which calls \verb|UAM.requestRepayInfo|.
   \item \verb|UAM.requestRepayInfo| calls \verb|UA.sendRepayInfo| which updates market information and transfers it with information about the user's TIP-3 wallet to \verb|UAM.receiveRepayInfo| which calls \verb|RM.repayLoan|.
   \item \verb|RM.repayLoan| calculates how much of the loan will be repayed and the changes to the markets after the repayment. A \verb|RepayBorrow| event is emitted with the repayment information. That information is then sent to \verb|MA.receiveCacheDelta| which updates market informations and calls \verb|RM.resumeOperation| with the new market information.
-  \item \verb|RM.resumeOperation| calls \verb|UAM.writeRepayInformation| which transfers it to \verb|UA.writeRepayInformation|.
-  \item \verb|UA.writeRepayInformation| calls \verb|UAM.calculateUserAccountHealth| \\with one of the two operation codes:
+  \item \verb|RM.resumeOperation| calls \verb|UAM.writeRepayInformation| which transfers it to \\\verb|UA.writeRepayInformation|.
+  \item \verb|UA.writeRepayInformation| calls \verb|UAM.calculateUserAccountHealth| with one of the two operation codes:
   \begin{itemize}
     \item \verb|REQUEST_TOKEN_PAYOUT| if there are leftover tokens after the repayment.
     \item \verb|NO_OP| otherwise.
@@ -527,11 +526,11 @@ We start with a "sub-scenario" which is the one of updating the user's account h
 \subsection{Liquidate}
 \begin{enumerate}
   \item The user makes an internal transfer through \verb|TTK.internalTransfer| with a payload containing the liquidation operation code.
-  \item The payload with information about the token wallet is passed to \\\verb|WC.tokensReceivedCallback|.
-  \item The payload is decoded and after checking the operation code a call is made to \verb|MA.performOperationWalletController| with the necessary information about the liquidation.
-  \item \verb|MA.performOperationWalletController| calls the Oracle to request the newest token prices, the response is receive with \\\verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
+  \item The payload with information about the token wallet is passed to \verb|WC.tokensReceivedCallback|.
+  \item The payload is decoded and after checking the operation code a call is made to \\\verb|MA.performOperationWalletController| with the necessary information about the liquidation.
+  \item \verb|MA.performOperationWalletController| calls the Oracle to request the newest token prices, the response is receive with \verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
   \item \verb|MA.performOperation| calls \verb|LM.performAction| which calls \\\verb|UAM.requestLiquidationInformation|.
-  \item \verb|UAM.requestLiquidationInformation| calls \\\verb|UA.requestLiquidationInformation| which updates market's indexes \\and calls \verb|UAM.receiveLiquidationInformation| with the new indexes and the user's supply and borrow information.
+  \item \verb|UAM.requestLiquidationInformation| calls \verb|UA.requestLiquidationInformation| which updates market's indexes and calls \verb|UAM.receiveLiquidationInformation| with the new indexes and the user's supply and borrow information.
   \item \verb|UAM.receiveLiquidationInformation| calls \verb|LM.liquidate| which:
   \begin{enumerate}
     \item Checks the account health of the user that is targeted for liquidation to check that it is still required.
@@ -539,15 +538,15 @@ We start with a "sub-scenario" which is the one of updating the user's account h
     \item Calculates the USD value of the liquidation amount.
     \item Calculates the how many of the targeted user's collateral to seize.
     \item Emits a \verb|TokensLiquidated| event with the liquidation information, update the markets and the liquidated user's borrow information.
-    \item Calls \verb|MA.receiveCacheDelta| which updates market informations and calls \verb|RM.resumeOperation| with the new market information.
+    \item Calls \verb|MA.receiveCacheDelta| which updates market informations and calls \\\verb|RM.resumeOperation| with the new market information.
   \end{enumerate}
-  \item \verb|LM.resumeOperation| recovers the sent information and passes it to \\\verb|UAM.seizeTokens| which calls \verb|UA.liquidateVTokens|.
-  \item \verb|UA.liquidateVTokens| updates the user's borrow and supply information and calls \verb|UAM.grantVTokens|.
-  \item \verb|UAM.grantVTokens| calls \verb|UA.checkUserAccountHealth| on the target \\user's account and wallet addresses to check their account health. Also calls \verb|UA.grantVTokens|.
+  \item \verb|LM.resumeOperation| recovers the sent information and passes it to \verb|UAM.seizeTokens| which calls \verb|UA.liquidateVTokens|.
+  \item \verb|UA.liquidateVTokens| updates the user's borrow and supply information and calls \\\verb|UAM.grantVTokens|.
+  \item \verb|UAM.grantVTokens| calls \verb|UA.checkUserAccountHealth| on the target user's account and wallet addresses to check their account health. Also calls \verb|UA.grantVTokens|.
   \item \verb|UA.grantVTokens| checks the liquidator's account health and builds a payload with the operation code \verb|RETURN_AND_UNLOCK| to pass to the function that checks the user's account.
   \item Once the new user's account health is recovered \verb|UAM.returnAndSupply| is called.
   \begin{itemize}
-    \item if there are leftover tokens after the liquidation then a call is made to \verb|MA.requestTokenPayout| with the tokens to return and the liquidator's TIP-3 wallet.
+    \item if there are leftover tokens after the liquidation then a call is made to \\\verb|MA.requestTokenPayout| with the tokens to return and the liquidator's TIP-3 wallet.
     \item A call is made to \verb|LM.unlock| to unlock it and return the remaining gas to the liquidator's wallet.
   \end{itemize}
   \item \verb|MA.requestTokenPayout| calls \verb|WC.transferTokensToWallet|.
