@@ -59,7 +59,7 @@ If a malicious user deploys a fake `UserAccountManager` which will deploy user's
 \section{Unsafe role assignement}
 
 \issueCritical{Unsafe role assignement in {\tt IRoles.sol}}{
-  The role setter functions {\tt setUpgrader} and {\tt setParamChanger} in the {\tt IRoles} abstract contract (file: "IRoles.sol") allow the contract owner to assign the upgrader or paramChanger role to the provided address or unassign it. The function should test that the provided address's value is not zero. Otherwise the owner can mistakingly give that right to all external users, which would make it possible for anyone to modify the functioning of the system.
+  The role setter functions {\tt setUpgrader} and {\tt setParamChanger} in the {\tt IRoles} abstract contract (file: "IRoles.sol") allow the contract owner to assign the upgrader or paramChanger role to the provided address or unassign it. The function should test that the provided address's value is not zero. Otherwise the owner can mistakingly give that right to all external users, which would make it possible for anyone to modify the functioning of the system. If the goal is to assign those roles to external users, then it's their pubkeys that should be stored, not adresses.
 }
 
 \section{Internal function names}
