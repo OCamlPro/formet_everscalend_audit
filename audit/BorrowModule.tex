@@ -1,0 +1,74 @@
+
+\section{Contract BorrowModule}
+
+In file {\tt BorrowModule.sol}
+
+\subsection{Function borrowTokensFromMarket}
+
+\begin{lstlisting}[firstnumber=74]
+    function borrowTokensFromMarket(
+        address tonWallet,
+        address userTip3Wallet,
+        uint256 tokensToBorrow,
+        uint32 marketId,
+        mapping (uint32 => uint256) supplyInfo,
+        mapping (uint32 => BorrowInfo) borrowInfo
+    ) external override onlyUserAccountManager {
+        tvm.rawReserve(msg.value, 2);
+        mapping(uint32 => MarketDelta) marketsDelta;
+        MarketDelta marketDelta;
+        
+        // Borrow:
+        // 1. Check that market has enough tokens for lending
+        // 2. Calculate user account health
+        // 3. Calculate USD value of tokens to borrow
+        // 4. Check if there is enough (collateral - borrowed) for new token borrow
+        // 5. Increase user's borrowed amount
+
+        MarketInfo mi = marketInfo[marketId];
+
+        if (tokensToBorrow < mi.realTokenBalance - mi.totalReserve) {
+            fraction accountHealth = Utilities.calculateSupplyBorrow(supplyInfo, borrowInfo, marketInfo, tokenPrices);
+            if (accountHealth.nom > accountHealth.denom) {
+                uint256 healthDelta = accountHealth.nom - accountHealth.denom;
+                fraction tmp = healthDelta.numFMul(tokenPrices[marketInfo[marketId].token]);
+                uint256 possibleTokenWithdraw = tmp.toNum();
+                if (possibleTokenWithdraw >= tokensToBorrow) {
+                    marketDelta.totalBorrowed.delta = tokensToBorrow;
+                    marketDelta.totalBorrowed.positive = true;
+                    marketDelta.realTokenBalance.delta = tokensToBorrow;
+                    marketDelta.realTokenBalance.positive = false;
+
+                    marketsDelta[marketId] = marketDelta;
+
+                    TvmBuilder tb;
+                    tb.store(marketId);
+                    tb.store(tonWallet);
+                    tb.store(userTip3Wallet);
+                    tb.store(tokensToBorrow);
+
+                    emit TokenBorrow(marketId, marketDelta, tonWallet, tokensToBorrow);
+
+                    IContractStateCacheRoot(marketAddress).receiveCacheDelta{
+                        flag: MsgFlag.REMAINING_GAS
+                    }(marketsDelta, tb.toCell());
+                } else {
+                    IUAMUserAccount(userAccountManager).writeBorrowInformation{
+                        flag: MsgFlag.REMAINING_GAS
+                    }(tonWallet, userTip3Wallet, 0, marketId, marketInfo[marketId].index);
+                }
+            } else {
+                IUAMUserAccount(userAccountManager).writeBorrowInformation{
+                    flag: MsgFlag.REMAINING_GAS
+                }(tonWallet, userTip3Wallet, 0, marketId, marketInfo[marketId].index);
+            }
+        } else {
+            address(tonWallet).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+        }
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \issueCritical{Math error}{Line 99. To caculate the amount of tokens that it is possible to withdraw, the health delta needs to be divided by the price of the token not multiplied by it.}
+\end{itemize}
+

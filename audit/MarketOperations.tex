@@ -1,0 +1,87 @@
+
+
+\section{Library MarketOperations}
+
+In file {\tt MarketOperations.sol}
+
+
+\subsection{Function calculateU}
+
+\begin{lstlisting}[firstnumber=9]
+    function calculateU(uint256 totalBorrowed, uint256 realTokens) internal pure returns (fraction) {
+        return fraction(totalBorrowed, totalBorrowed + realTokens);
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedFunction{MarketOperations.calculateU}
+\end{itemize}
+
+
+\subsection{Function calculateTotalReserves}
+
+\begin{lstlisting}[firstnumber=28]
+    function calculateTotalReserves(uint256 totalReserve, uint256 totalBorrowed, fraction r, fraction reserveFactor, uint256 t) internal returns (fraction) {
+        fraction tr;
+        tr = r.fNumMul(t);
+        tr = tr.fMul(reserveFactor);
+        tr = tr.fNumMul(totalBorrowed);
+        tr = tr.fNumAdd(totalReserve);
+        return tr;
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedFunction{MarketOperations.calculateTotalReserves}
+\end{itemize}
+
+
+\subsection{Function calculateNewIndex}
+
+\begin{lstlisting}[firstnumber=37]
+    function calculateNewIndex(fraction index, fraction bir, uint256 dt) internal returns (fraction) {
+        fraction index_;
+        index_ = bir.fNumMul(dt);
+        index_ = index_.fNumAdd(1);
+        index_ = index_.fAdd(index);
+        return index_;
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedFunction{MarketOperations.calculateNewIndex}
+\end{itemize}
+
+
+\subsection{Function calculateTotalBorrowed}
+
+\begin{lstlisting}[firstnumber=45]
+    function calculateTotalBorrowed(uint256 totalBorrowed, fraction oldIndex, fraction newIndex) internal returns (uint256) {
+        fraction tb_;
+        tb_ = totalBorrowed.numFDiv(oldIndex);
+        tb_ = tb_.fMul(newIndex);
+        return tb_.toNum();
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedFunction{MarketOperations.calculateTotalBorrowed}
+\end{itemize}
+
+
+\subsection{Function calculateReserves}
+
+\begin{lstlisting}[firstnumber=52]
+    function calculateReserves(uint256 reserveOld, uint256 totalBorrowedOld, fraction bir, fraction reserveFactor, uint256 dt) internal returns (uint256) {
+        fraction res = bir;
+        res = res.fNumMul(dt);
+        res = res.fMul(reserveFactor);
+        res = res.fNumMul(totalBorrowedOld);
+        res = res.fNumAdd(reserveOld);
+        return res.toNum();
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedFunction{MarketOperations.calculateReserves}
+\end{itemize}

@@ -1,0 +1,66 @@
+
+\section{Library MarketMath}
+
+In file {\tt MarketMath.sol}
+
+
+\subsection{Function calculateUtilizationRate}
+
+\begin{lstlisting}[firstnumber=4]
+    function calculateUtilizationRate(uint256 currentPool, uint256 totalBorrowed) internal pure returns (uint256) {
+
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \undefinedFunction{MarketMath.calculateUtilizationRate}
+\end{itemize}
+
+
+\subsection{Function calculateBorrowingRate}
+
+\begin{lstlisting}[firstnumber=8]
+    function calculateBorrowingRate(uint256 currentPool, uint256 totalBorrowed, uint256 totalReserves, uint256 totalSupply) 
+        internal pure returns (uint256) 
+    {
+
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \undefinedFunction{MarketMath.calculateBorrowingRate}
+\end{itemize}
+
+
+\subsection{Function calculateExchangeRate}
+
+\begin{lstlisting}[firstnumber=14]
+    function calculateExchangeRate(uint256 currentPool, uint256 totalBorrowed, uint256 totalReserves, uint256 totalSupply)
+        internal pure returns (uint256) 
+    {
+        return math.div(currentPool - totalReserves + totalBorrowed, totalSupply);
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \undefinedFunction{MarketMath.calculateExchangeRate}
+  \item \issueMinor{Syntax Error in {\tt MarketMath.calculateExchangeRate}}{{\tt math.div} does not exist. It should use the infix division operator {\tt /}.}
+\end{itemize}
+
+
+\subsection{Function recalculateState}
+
+\begin{lstlisting}[firstnumber=20]
+    function recalculateState(uint256 currentPool, uint256 totalBorrowed, uint256 totalReserves, uint256 totalSupply)
+        internal pure 
+    {
+        // uint256 exchangeRate = calculateExchangeRate(currentPool, totalBorrowed, totalReserves, totalSupply);
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \undefinedFunction{MarketMath.recalculateState}
+\end{itemize}
+
+
+

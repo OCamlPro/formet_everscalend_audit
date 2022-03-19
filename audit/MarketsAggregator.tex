@@ -1,0 +1,111 @@
+
+\section{Contract MarketAggregator}
+
+In file {\tt MarketsAggregator.sol}
+
+\subsection{Function performOperation}
+
+\begin{lstlisting}[firstnumber=361]
+    function performOperation(TvmCell args) internal view {
+        TvmSlice ts = args.toSlice();
+
+        uint8 operationId = ts.decode(uint8);
+        if (operationId != OperationCodes.NO_OP) {
+            uint32 marketId = ts.decode(uint32);
+            TvmCell moduleArgs = ts.loadRef();
+            IModule(modules[operationId]).performAction{
+                flag: MsgFlag.REMAINING_GAS
+            }(marketId, moduleArgs, markets, tokenPrices);
+        } else {
+            address(_owner).transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
+        }
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \internalFunctionName{MarketAggregator.performOperation}
+\end{itemize}
+
+
+\subsection{Function updatePrice}
+
+\begin{lstlisting}[firstnumber=428]
+    function updatePrice(address tokenRoot, TvmCell payload) internal view {
+        IOracleReturnPrices(oracle).getTokenPrice{
+            flag: MsgFlag.REMAINING_GAS,
+            callback: this.receiveUpdatedPrice
+        }(tokenRoot, payload);
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \internalFunctionName{MarketAggregator.updatePrice}
+\end{itemize}
+  
+  
+\subsection{Function \_{}calculateBorrowInfo}
+
+\begin{lstlisting}[firstnumber=516]
+    function _calculateBorrowInfo(mapping(uint32 => BorrowInfo) borrowInfo, mapping(uint32 => fraction) updatedIndexes) internal returns(mapping (uint32=>uint256) userBorrowInfo) {
+        for ((uint32 marketId, BorrowInfo bi): borrowInfo) {
+            if (bi.tokensBorrowed != 0) {
+                fraction tmpf = borrowInfo[marketId].tokensBorrowed.numFMul(updatedIndexes[marketId]);
+                tmpf = tmpf.fDiv(bi.index);
+                userBorrowInfo[marketId] = tmpf.toNum();
+            } else {
+                userBorrowInfo[marketId] = 0;
+            }
+        }
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedFunction{MarketAggregator.\_calculateBorrowInfo}
+\end{itemize}
+
+
+\subsection{Modifier onlySelf}
+
+\begin{lstlisting}[firstnumber=510]
+    modifier onlySelf() {
+        require(msg.sender == address(this), MarketErrorCodes.ERROR_MSG_SENDER_IS_NOT_SELF);
+        _;
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedModifier{MarketAggregator.onlySelf}
+\end{itemize}
+
+
+\subsection{Modifier onlyRealTokenRoot}
+
+\begin{lstlisting}[firstnumber=533]
+    modifier onlyRealTokenRoot() {
+        require(realTokenRoots.exists(msg.sender));
+        _;
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedModifier{MarketAggregator.onlyRealTokenRoot}
+\end{itemize}
+
+
+\subsection{Modifier onlyExecutor}
+
+\begin{lstlisting}[firstnumber=543]
+    modifier onlyExecutor() {
+        require(
+            (msg.sender == userAccountManager) ||
+            (isModule.exists(msg.sender))
+        );
+        _;
+    }
+\end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \unusedModifier{MarketAggregator.onlyExecutor}
+\end{itemize}
+
+

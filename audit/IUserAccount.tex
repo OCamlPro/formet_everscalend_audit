@@ -1,0 +1,18 @@
+
+\section{Module "IUserAccount.sol"}
+
+\subsection{Struct UserMarketInfo}
+
+\begin{lstlisting}[firstnumber=10]
+  struct UserMarketInfo {
+      bool exists;
+      uint32 _marketId;
+      uint256 suppliedTokens;
+      fraction accountHealth;
+      BorrowInfo borrowInfo;
+  }
+  \end{lstlisting}
+
+\noindent\begin{itemize}
+  \item \issueMinor{Unused struct field}{The field {\tt accountHealth} is unused.}
+\end{itemize}

@@ -1,4 +1,109 @@
 
-%\input{libraries.tex}
 
-%\input{contracts.tex}
+
+\noindent This chapter presents an audit of Everscalend's smart contracts and lists the issues that were encoured in the source code.
+
+
+
+\listoffigures
+
+
+
+
+
+\section{General remarks}
+
+In this section we present some recurrent issues that were encountered in the source code and some general good practices that should be respected. 
+
+%\subsection{Typography of Static Variables}
+%\label{readability:static}
+
+%A good coding convention is to use typography to visually discriminate static variables from other variables, for example using a prefix such as {\tt s\_}.
+
+%\subsection{Typography of Global Variables}
+%\label{readability:global}
+
+%A good coding convention is to use typography to visually discriminate global variables from local variables, for example using a prefix such as {\tt m\_} or {\tt g\_}.
+
+\subsection{Typography of Internal Functions}
+\label{readability:internal}
+
+A good coding convention is to use typography to visually discriminate public functions and internal functions, for example using a prefix such as {\tt \_}.
+
+%\subsection{Accept Methods without Checks}
+%\label{accept:all}
+
+%Public methods using {\tt tvm.accept()} without any prior check should not exist. Indeed, such methods could be used by attackers to drain the balance of the contracts, even with minor amounts but unlimited number of messages.
+
+\subsection{Constructors without checks}
+\label{constructor:check}
+
+Contract constructors should always at the very least verify that the contract's public key is set and that the deployer is the owner of the contract. This is important especially in the case in which the contract has arguments that set the state variables. If it is not done, it opens the gate to various kinds of attacks.
+
+
+\newcommand{\undefinedFunction}[1]{\issueMinor{Undefined function: {\tt #1}}{Undefined and unused function.}}
+
+\newcommand{\unusedFunction}[1]{\issueMinor{Unused function: {\tt #1}}{Unused function.}}
+
+\newcommand{\unusedModifier}[1]{\issueMinor{Unused modifier: {\tt #1}}{Unused modifier.}}
+
+%\newcommand{\libraryFunctionMutability}[1]{\issueMinor{Warning in {\tt #1}}{Library functions must have default mutability.}} %too many
+
+\newcommand{\internalFunctionName}[1]{\issueMinor{Readability issue in \{\tt #1}{See \ref{readability:internal}. Internal function names should start with {\tt \_}.}}
+
+\section{Contract deployment from Platform}
+
+\issueCritical{Unprotected constructors in many contracts}{
+  See \ref{constructor:check}. 
+  
+  Other than the `RootTokenContract` and `TONTokenWallet` contracts, all the other contracts have unprotected constructors and a comment that says that the contract will be deployed from the Platform. That does mean that is no longer necessary to check that the deployer of the contract is the owner of the contract. It is especially dangerous in the contracts which set the owner through the constructor like: `MarketAggregator`, `BorrowModule`, `LiquidationModule`, `RepayModule`, `SupplyModule`, `WithdrawModule`, `Oracle`, `TIP3TokenDeployer`, `UserAccount`, `UserAccountManager`, `Platform` and `WalletController`.
+}
+
+\subsection{Possible attack}
+
+It makes it possible to perform phishing attacks by deploying fake contracts with which the users can interact with. So instead of interacting with the real contract they interact with the fake. 
+
+If a malicious user deploys a fake `UserAccountManager` which will deploy user's accounts. And one of the users requests a withdraw of their tokens. The owner of the fake `UserAccountManager` can either block the transaction stopping the user's from withdrawing their tokens, or ask them for a fee before processing their request.
+
+%In a less likely way, if another user has the address of the owner, they can deploy the contract as if they were the owner before he does and impersonate him, making them able to control a fake system to their own interest. 
+
+%\section{Address setting and updating}
+
+%\issueCritical{No checks before setting}{}
+
+%\subsection{Possible attack}
+
+\section{Internal function names ({\tt TODO} regroup them here)}
+
+\section{Undefined functions ({\tt TODO} regroup them here)}
+
+\section{Unused functions ({\tt TODO} regroup them here)}
+
+\section{Unused modifiers ({\tt TODO} regroup them here)}
+
+
+\input{audit/Giver.tex} %ignored for now
+\input{audit/MarketMath.tex}
+\input{audit/MarketOperations.tex}
+\input{audit/MarketPayloads.tex}
+\input{audit/MarketsAggregator.tex}
+
+\input{audit/IModule.tex}
+\input{audit/BorrowModule.tex}
+\input{audit/LiquidationModule.tex}
+\input{audit/RepayModule.tex}
+\input{audit/SupplyModule.tex}
+\input{audit/WithdrawModule.tex}
+
+\input{audit/Oracle.tex}
+\input{audit/TIP3Deployer.tex}
+\input{audit/UserAccount.tex}
+\input{audit/UserAccountManager.tex}
+\input{audit/WalletController.tex}
+
+\input{audit/IRoles.tex}
+\input{audit/Platform.tex}
+\input{audit/RootTokenContract.tex}
+\input{audit/TONTokenWallet.tex}
+\input{audit/FloatingPointOperations.tex}
+\input{audit/TvmCellOperations.tex}
