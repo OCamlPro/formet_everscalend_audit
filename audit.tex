@@ -55,13 +55,12 @@ It makes it possible to perform phishing attacks by deploying fake contracts wit
 
 If a malicious user deploys a fake `UserAccountManager` which will deploy user's accounts. And one of the users requests a withdraw of their tokens. The owner of the fake `UserAccountManager` can either block the transaction stopping the user's from withdrawing their tokens, or ask them for a fee before processing their request.
 
-%In a less likely way, if another user has the address of the owner, they can deploy the contract as if they were the owner before he does and impersonate him, making them able to control a fake system to their own interest. 
 
-%\section{Address setting and updating}
+\section{Unsafe role assignement}
 
-%\issueCritical{No checks before setting}{}
-
-%\subsection{Possible attack}
+\issueCritical{Unsafe role assignement in {\tt IRoles.sol}}{
+  The role setter functions {\tt setUpgrader} and {\tt setParamChanger} in the {\tt IRoles} abstract contract (file: "IRoles.sol") allow the contract owner to assign the upgrader or paramChanger role to the provided address or unassign it. The function should test that the provided address's value is not zero. Otherwise the owner can mistakingly give that right to all external users, which would make it possible for anyone to modify the functioning of the system.
+}
 
 \section{Internal function names}
 
