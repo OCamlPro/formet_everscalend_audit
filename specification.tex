@@ -2,7 +2,7 @@
 
 \section{System purpose}
 
-Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system implemented on the Everscale Blockchain. Its main purpose is to provide Everscale users with a realiable way to lend and borrow cryptocurrency tokens. It makes it possible for users to generate profits on tokens they supply for lending and to acquire tokens by borrowing them instead of buying them.
+Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system implemented on the Everscale Blockchain. Its main purpose is to provide Everscale users with a realiable way to lend and borrow cryptocurrency tokens. It makes it possible for users to generate profits on tokens they supply for lending and to acquire temporarily tokens by borrowing them instead of buying them.
 
 \section{Terms of the system domain}
 
@@ -122,26 +122,23 @@ The following mathematical notations are used in the document to simplify the eq
 \newpage
 \section{System functioning}
 
-the Everscalend system uses markets, which are pools of fungible tokens with algorithmically calculated interest rates, based on the supply and borrow demand for the tokens they hold. Each market is unique to a cryptocurrency, and contains a transparent and publicly-inspectable ledger, with a record of all transactions and historical interest rates.
+The Everscalend system uses markets, which are pools of fungible tokens with algorithmically calculated interest rates, based on the supply and borrow demand for the tokens they hold. Each market is unique to a cryptocurrency, and contains a transparent and publicly-inspectable ledger, with a record of all transactions and historical interest rates.
 
 The lenders and the borrowers of tokens interact directly with the system, earning and paying a variable interest rate, without having to negotiate terms such as the interest rate or the value of collateral with a peer or counterparty.
 
-In this section we describe the functioning of the system.
+In this section we describe how the system works.
 
-\subsection{Kinds of users}
+\subsection{Groups of users}
 
-There are two kinds of clearly identifiable users:
+A user may be part of three different groups of users with different rights:
 \begin{itemize}
-  \item The admin who is the deployer of the main contracts of the system like \verb|MarketAggregator|, \verb|WalletController| or \verb|Oracle|.
-  \item The ``normal'' users who interact with the system.
+  \item The admin group (or \verb|owner| as there is only one user in the group per contract) who is the deployer of the main contracts of the system like \verb|MarketAggregator|, \verb|WalletController| or \verb|Oracle|.
+Being part of this group gives the right to modify all the parameters of the system, and in particular to assign users to groups.
+  \item The \verb|Upgrader| group: being part of this group gives the right to upgrades the code of the contracts.
+  \item The \verb|Parameter changer| group: being part of this group gives them the to modify some of the parameters of the system.
 \end{itemize}
-And there are four roles that can be taken by the users and which determine their permissions when it comes to interacting with the system:
-\begin{itemize}
-  \item Owner: this is the role of the admin only. It gives them the right to modify all the parameters of the system.
-  \item Upgrader: this role can be given to a user by the owner and it gives them the right to upgrades some contracts' codes.
-  \item Parameter changer: this role can be given to a user by the owner and it gives them the to modify some of the parameters of the system.
-  \item Other: this is the role of all the users who don't have a privileged role and can only interact with the system to realise the market opeartions (supply, borrow ...) without being able to manually change the parameters of the system.
-\end{itemize}
+
+All other users can only interact with the system to realise the market opeartions (supply, borrow ...) without being able to manually change the parameters of the system.
 
 \subsection{User capabilities}
 
