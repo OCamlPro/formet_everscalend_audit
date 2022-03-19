@@ -1,13 +1,11 @@
 
+\bigskip
+
 \section{Library Utilities}
 
 In file {\tt IModule.sol}
 
 \subsection{Function calculateSupplyBorrow}
-
-\noindent\begin{itemize}
-\item \issueMinor{Naming}{The function is called ``calculateSupplyBorrow'' but it calculates a user's account health. It should be named accordingly, e.g. ``calculateAccountHealth''.}
-\end{itemize}
 
 \begin{lstlisting}[firstnumber=90]
     function calculateSupplyBorrow(
@@ -57,3 +55,5 @@ In file {\tt IModule.sol}
         return accountHealth;
     }
 \end{lstlisting}
+
+\issueMinor{Unintuitive function name}{The function is called ``calculateSupplyBorrow'' but it calculates a user's account health. It should be named accordingly, e.g. ``calculateAccountHealth''.}

@@ -1,4 +1,6 @@
 
+\bigskip
+
 \section{Contract Platform}
 
 In file {\tt Platform.sol}.
@@ -24,7 +26,5 @@ In file {\tt Platform.sol}.
   }
 \end{lstlisting}
 
-\noindent\begin{itemize}
-  \item \issueMajor{{\tt tvm.accept} in a private function}{Private and internal functions should not have a {\tt tvm.accept}, especially without checks.}
-\end{itemize}
+\issueMajor{{\tt tvm.accept} in a private function}{Private and internal functions should not have a {\tt tvm.accept}, especially without checks.}
 

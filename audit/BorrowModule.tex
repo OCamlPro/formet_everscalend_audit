@@ -1,4 +1,6 @@
 
+\bigskip
+
 \section{Contract BorrowModule}
 
 In file {\tt BorrowModule.sol}
@@ -68,7 +70,5 @@ In file {\tt BorrowModule.sol}
     }
 \end{lstlisting}
 
-\noindent\begin{itemize}
-  \item \issueCritical{Math error}{Line 99. To caculate the amount of tokens that it is possible to withdraw, the health delta needs to be divided by the price of the token not multiplied by it.}
-\end{itemize}
+\issueCritical{Math error in {\tt BorrowModule.borrowTokensFromMarket}}{Line 99. To caculate the amount of tokens that it is possible to withdraw, the health delta needs to be divided by the price of the token not multiplied by it.}
 

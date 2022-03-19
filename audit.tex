@@ -4,9 +4,10 @@
 \noindent This chapter presents an audit of Everscalend's smart contracts and lists the issues that were encoured in the source code.
 
 
+\begin{figure}[hbt!]
 
 \listoffigures
-
+\end{figure}
 
 
 
@@ -40,17 +41,6 @@ A good coding convention is to use typography to visually discriminate public fu
 
 Contract constructors should always at the very least verify that the contract's public key is set and that the deployer is the owner of the contract. This is important especially in the case in which the contract has arguments that set the state variables. If it is not done, it opens the gate to various kinds of attacks.
 
-
-\newcommand{\undefinedFunction}[1]{\issueMinor{Undefined function: {\tt #1}}{Undefined and unused function.}}
-
-\newcommand{\unusedFunction}[1]{\issueMinor{Unused function: {\tt #1}}{Unused function.}}
-
-\newcommand{\unusedModifier}[1]{\issueMinor{Unused modifier: {\tt #1}}{Unused modifier.}}
-
-%\newcommand{\libraryFunctionMutability}[1]{\issueMinor{Warning in {\tt #1}}{Library functions must have default mutability.}} %too many
-
-\newcommand{\internalFunctionName}[1]{\issueMinor{Readability issue in \{\tt #1}{See \ref{readability:internal}. Internal function names should start with {\tt \_}.}}
-
 \section{Contract deployment from Platform}
 
 \issueCritical{Unprotected constructors in many contracts}{
@@ -73,14 +63,42 @@ If a malicious user deploys a fake `UserAccountManager` which will deploy user's
 
 %\subsection{Possible attack}
 
-\section{Internal function names ({\tt TODO} regroup them here)}
+\section{Internal function names}
 
-\section{Undefined functions ({\tt TODO} regroup them here)}
+\issueMinor{Internal function names}{
+  See \ref{readability:internal}. 
 
-\section{Unused functions ({\tt TODO} regroup them here)}
+  The functions {\tt performOperation} and {\tt updatePrice} in the {\tt MarketAggregator} contract (file: "MarketsAggregator.sol"). are internal so their names should start with `\_`.
+}
 
-\section{Unused modifiers ({\tt TODO} regroup them here)}
+\section{Undefined functions}
 
+\issueMinor{Undefined functions}{
+  The functions {\tt calculateUtilizationRate}, {\tt calculateBorrowingRate} and {\tt calculateExchangeRate} in the `MarketMath` library (file: "MarketMath.sol") are undefined and unused. Defining and using them appropriately would significantly improve the readability of the source code.
+}
+
+\section{Unused functions}
+
+\issueMinor{Unused functions}{
+  The functions: 
+  \begin{itemize}
+    \item {\tt calculateExchangeRate} in the {\tt MarketMath} library (file: "MarketMath.sol")
+    \item {\tt calculateU}, {\tt calculateTotalReserves}, {\tt calculateNewIndex}, {\tt calculateTotalBorrowed} and {\tt calculateReserves} in the {\tt MarketOperations} library (file: "MarketOperations.sol")
+    \item {\tt \_calculateBorrowInfo} in the {\tt MarketAggregator} conract (file: "MarketsAggregator.sol")
+  \end{itemize}
+  And all the functions from the {\tt MarketToUserPayloads} library (file: "MarketPayloads.sol") and {\tt TvmCellOperations} library (file: "TvmCellOperations.sol") are unused. Unused functions should be removed from the code as they are useless and they clutter the code.
+}
+
+\section{Unused modifiers}
+
+\issueMinor{Unused modifiers}{
+  The modifiers: 
+  \begin{itemize}
+    \item {\tt onlySelf}, {\tt onlyRealTokenRoot} and {\tt onlyExecutor} in the {\tt MarketAggregator} contract (file: "MarketsAggregator.sol")
+    \item {\tt onlyMarket} in the {\tt WalletController} conract (file: "WalletController.sol")
+  \end{itemize}
+  Are unused. Unused modifiers should be removed from the code as they are useless and they clutter the code.
+}
 
 \input{audit/Giver.tex} %ignored for now
 \input{audit/MarketMath.tex}
@@ -97,6 +115,7 @@ If a malicious user deploys a fake `UserAccountManager` which will deploy user's
 
 \input{audit/Oracle.tex}
 \input{audit/TIP3Deployer.tex}
+\input{audit/IUserAccount.tex}
 \input{audit/UserAccount.tex}
 \input{audit/UserAccountManager.tex}
 \input{audit/WalletController.tex}

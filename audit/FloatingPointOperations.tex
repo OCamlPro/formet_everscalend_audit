@@ -1,6 +1,8 @@
 
 
 
+\bigskip
+
 \section{Module "FloatingPointOperations.sol"}
 
 \subsection{Struct fraction}
@@ -12,9 +14,9 @@
   }
 \end{lstlisting}
 
-\noindent\begin{itemize}
-  \item \issueMinor{Naming}{The name of the field {\tt nom} should be {\tt num} for ``numerator''.}
-\end{itemize}
+\issueMinor{Unintuitive struct field name}{The name of the field {\tt nom} should be {\tt num} for ``numerator''.}
+
+\bigskip
 
 \section{Library FPO}
 
@@ -28,10 +30,9 @@ In file {\tt FloatingPointOperations.sol}
     }
 \end{lstlisting}
 
-\noindent\begin{itemize}
-  \item \issueMajor{Math error}{Comparing numerators and denominators when testing if fractions are equal is incorrect. $eq(\frac{a}{b}, \frac{a \times 2}{b \times 2})$ will return {\tt false} while it should return {\tt true}. The fractions need to be normalized before testing the equality.}
-\end{itemize}
+\issueMajor{Math error in {\tt FPO.eq}}{Comparing numerators and denominators when testing if fractions are equal is incorrect. $eq(\frac{a}{b}, \frac{a \times 2}{b \times 2})$ will return {\tt false} while it should return {\tt true}. The fractions need to be normalized before testing the equality.}
 
+\bigskip
 
 \subsection{Function simplify}
 
@@ -68,7 +69,4 @@ In file {\tt FloatingPointOperations.sol}
   }
 \end{lstlisting}
 
-\noindent\begin{itemize}
-  \item \issueMinor{Math issue in {\tt FPO.simplify}}{Dividing the numerator and denominator by their greatest common divisor might make it unnecessary to do the bitshift and avoid losing precision.}
-\end{itemize}
-
+\issueMinor{Math issue in {\tt FPO.simplify}}{Dividing the numerator and denominator by their greatest common divisor might make it unnecessary to do the bitshift and avoid losing precision.}
