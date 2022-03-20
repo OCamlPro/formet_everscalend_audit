@@ -3,38 +3,41 @@
 
 \noindent This chapter presents an audit of Everscalend's smart contracts and lists the issues that were encoured in the source code.
 
+During the security audit, we used the following classification of our findings, into three kinds of issues:
 
-\begin{figure}[hbt!]
+\begin{itemize}
+  \item {\bf Critical Issues:} such issues can lead to taking ownership of resources (tokens, contracts), or total disabling of the service;
+  \item {\bf Major Issues:} such issues can lead to a decrease in the quality of the service, or temporary loss of availability;
+  \item {\bf Minor Issues:} Such issues do not impact the service itself. For example, code improvements to improve readability, to improve sharing, etc.
+\end{itemize}
 
-\listoffigures
-\end{figure}
+We found 3 critical issues, 3 major issues and 8 minor issues during this audit of the contracts. Some of the issues are duplicated in multiple files.
+
+\begin{itemize}
+\item {\bf 3 Critical Issues:}
+\item {\bf 3 Major Issues:}
+\item {\bf 8 Minor Issues:}
+\end{itemize}
+
+For easier access to the issues, we provided a table of the found issues below.
 
 
+\begingroup
+  \pagestyle{plain}
+  \begin{figure}[hbt!]
+    \listoffigures
+  \end{figure}
+\endgroup
 
 
 \section{General remarks}
 
 In this section we present some recurrent issues that were encountered in the source code and some general good practices that should be respected. 
 
-%\subsection{Typography of Static Variables}
-%\label{readability:static}
-
-%A good coding convention is to use typography to visually discriminate static variables from other variables, for example using a prefix such as {\tt s\_}.
-
-%\subsection{Typography of Global Variables}
-%\label{readability:global}
-
-%A good coding convention is to use typography to visually discriminate global variables from local variables, for example using a prefix such as {\tt m\_} or {\tt g\_}.
-
 \subsection{Typography of Internal Functions}
 \label{readability:internal}
 
 A good coding convention is to use typography to visually discriminate public functions and internal functions, for example using a prefix such as {\tt \_}.
-
-%\subsection{Accept Methods without Checks}
-%\label{accept:all}
-
-%Public methods using {\tt tvm.accept()} without any prior check should not exist. Indeed, such methods could be used by attackers to drain the balance of the contracts, even with minor amounts but unlimited number of messages.
 
 \subsection{Constructors without checks}
 \label{constructor:check}

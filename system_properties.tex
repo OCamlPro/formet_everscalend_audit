@@ -1,5 +1,39 @@
 
-%\section{System properties}
+This chapter lists the system properties. The mathematical notations defined in \ref{spec:mn} are used.
 
-This chapter lists the system properties that mend for some of the risks presented in the previous section. The mathematical notations defined in \ref{spec:mn} are used.
+\section{Assumptions}
 
+\begin{itemize}
+  \item No runtime errors (division by zero, out of bounds access ... etc).
+  \item Parameters are set in a way that favors the interest of the market and its users. And more generally the deployers of the system know what they are doing and do not make critical mistakes like accidentally removing markets or others.
+  \item External informations like token prices are correct (no corrupted data like tokens having no price or being worth zero USD).
+  \item Users are not able to perform any operation that doesn't fit into their role.
+  \item The mathematical calculations are correct (When calculating interest accumulation, liquidation grants ... etc).
+\end{itemize}
+
+\section{User related properties}
+
+\begin{itemize}
+  \item A user that supplied tokens of type $T$ to the system gets an amount of $\vT{T}$ that is equal to the number of $T$ tokens multiplied by $\ER{T}{\vT{T}}$.
+  
+  \item A user can borrow a certain amount of tokens if that amount multiplied by the collateral factor of the market from which he wishes to borrow, is worth less than his borrowing capacity.
+  
+  \item Withdarwing and borrowing can only be done by a user with a healthy account.
+  \item The amount of tokens of type $T$ a user can withdraw is determined by how many he owns of $\vT{T}$. That amount has to be less than or equal to his number of $\vT{T}$ multiplied by $\ER{\vT{T}}{T}$.
+  \item Withdrawing tokens of type $T$ decreases the user's balance of $\vT{T}$ by the numver of $T$ tokens they wish to borrow multiplied by $\ER{T}{\vT{T}}$.
+  
+  \item Repaying a loan improves a user's account health and increases their borrowing capacity.
+
+  \item Liquidating a loan of tokens of type $\T{1}$ which was taken by a borrower who used vTokens of type $\vT{\T{2}}$ as collateral decreases the liquidators balance of $\T{1}$ tokens and increases their balance of of $\vT{\T{T_2}}$ vTokens with the right amounts.
+\end{itemize}
+
+\section{Market properties}
+
+\begin{itemize}
+  \item Operations are only performed by the users which belong to the groups that are allowed to perform those operations.
+  \item Contracts, functions and users who are locked during the perfoming of some operation are unlocked as soon as the critical phase (Which usually is the moment in which data in written in some contract that can be accessed by other users or contracts) of the operation is passed.
+  \item Withdraw and borrow operations can only withdraw or borrow as many tokens as there are in the market.
+  \item Liquidation cannot lead to seizing tokens stored in the reserves.
+  \item All operations interacting with markets can only be performed if the market exists.
+  \item The value of $\ER{\vT{T}}{T}$ increases after each time the interest is accumulated.
+\end{itemize}

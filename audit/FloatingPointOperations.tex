@@ -30,7 +30,7 @@ In file {\tt FloatingPointOperations.sol}
     }
 \end{lstlisting}
 
-\issueMajor{Math error in {\tt FPO.eq}}{Comparing numerators and denominators when testing if fractions are equal is incorrect. $eq(\frac{a}{b}, \frac{a \times 2}{b \times 2})$ will return {\tt false} while it should return {\tt true}. The fractions need to be normalized before testing the equality.}
+\issueMajor{Math error in {\tt FPO.eq}}{Comparing numerators and denominators when testing if fractions are equal is incorrect. $eq(\frac{a}{b}, \frac{a \times 2}{b \times 2})$ will return {\tt false} while it should return {\tt true}. The fractions need to be normalized before checking if they are equal.}
 
 \bigskip
 
@@ -38,7 +38,7 @@ In file {\tt FloatingPointOperations.sol}
 
 \begin{lstlisting}[firstnumber=69]
   function simplify(fraction a) internal pure returns(fraction) {
-      // loosing ??? of presicion at most
+      // loosing ??? % of presicion at most
       if (a.nom / a.denom > 100e9) {
           return fraction(a.nom / a.denom, 1);
       } else {
@@ -69,4 +69,4 @@ In file {\tt FloatingPointOperations.sol}
   }
 \end{lstlisting}
 
-\issueMinor{Math issue in {\tt FPO.simplify}}{Dividing the numerator and denominator by their greatest common divisor might make it unnecessary to do the bitshift and avoid losing precision.}
+\issueMajor{Math issue in {\tt FPO.simplify}}{Dividing the numerator and denominator by their greatest common divisor might make it unnecessary to do the bitshift and avoid losing precision.}

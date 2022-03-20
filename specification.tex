@@ -399,7 +399,7 @@ The users mainly interact with TonTokenWallet and UserAccount to perform the mar
 \section{Usage scenarios}
 
 This section contains low level descriptions of usage scenarios which describe how the users interatct with the smart contracts and how the smart contracts interact between them.
-\newpage
+
 Used notation:
 
 \begin{tabularx}{\textwidth}{|l X|l X|} \hline
@@ -413,7 +413,7 @@ Used notation:
 In the source code a lot of the interactions between the smart contracts are done with the intermediary of interfaces. In these usage scenarios we ignore the interfaces and present only the interactions between the contracts which the interfaces refer to.
 
 \subsection{Updating a user's account health}
-We start with a "sub-scenario" which is the one of updating the user's account health. This scenario was added because it's used by the other ones and to avoid repeating it everytime, we describe here what happens when we that the user's account health is updated.
+We start with a "sub-scenario" which is the one of updating the user's account health. This scenario was added because it's used by the other ones and to avoid repeating it everytime, we describe here what happens when we say that the user's account health is updated.
 
 \begin{enumerate}
   \item \verb|UAM.calculateUserAccountHealth| is called from |UA| with a payload.
