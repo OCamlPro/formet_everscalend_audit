@@ -1,14 +1,10 @@
 
-
-
-\noindent This chapter presents an audit of Everscalend's smart contracts and lists the issues that were encoured in the source code.
-
-During the security audit, we used the following classification of our findings, into three kinds of issues:
+This chapter presents an audit of Everscalend's smart contracts and lists the issues that were encoured in the source code. During the audit, we used the following classification of our findings into three kinds of issues:
 
 \begin{itemize}
-  \item {\bf Critical Issues:} such issues can lead to taking ownership of resources (tokens, contracts), or total disabling of the service;
-  \item {\bf Major Issues:} such issues can lead to a decrease in the quality of the service, or temporary loss of availability;
-  \item {\bf Minor Issues:} Such issues do not impact the service itself. For example, code improvements to improve readability, to improve sharing, etc.
+  \item {\bf Critical Issues:} such issues can lead to taking ownership of resources (tokens, contracts), or the disabling of the system;
+  \item {\bf Major Issues:} such issues can lead to a decrease in the quality of the system, or a temporary loss of availability;
+  \item {\bf Minor Issues:} Such issues do not impact the functioning of the system itself. For example, improvements to the readability of the code, it's structure, etc.
 \end{itemize}
 
 We found 3 critical issues, 3 major issues and 8 minor issues during this audit of the contracts. Some of the issues are duplicated in multiple files.
@@ -24,7 +20,7 @@ For easier access to the issues, we provided a table of the found issues below.
 
 \begingroup
   \pagestyle{plain}
-  \begin{figure}[hbt!]
+  \begin{figure}[H]
     \listoffigures
   \end{figure}
 \endgroup
@@ -49,12 +45,12 @@ Contract constructors should always at the very least verify that the contract's
 \issueCritical{Unprotected constructors in many contracts}{
   See \ref{constructor:check}. 
   
-  Other than the `RootTokenContract` and `TONTokenWallet` contracts, all the other contracts have unprotected constructors and a comment that says that the contract will be deployed from the Platform. That does mean that is no longer necessary to check that the deployer of the contract is the owner of the contract. It is especially dangerous in the contracts which set the owner through the constructor like: `MarketAggregator`, `BorrowModule`, `LiquidationModule`, `RepayModule`, `SupplyModule`, `WithdrawModule`, `Oracle`, `TIP3TokenDeployer`, `UserAccount`, `UserAccountManager`, `Platform` and `WalletController`.
+  Other than the `RootTokenContract` and `TONTokenWallet` contracts, all the other contracts have unprotected constructors and a comment that says that the contract will be deployed from the Platform. That does not mean that it is no longer necessary to check that the deployer of the contract is the owner of the contract. It is especially dangerous in the contracts which set the owner through the constructor like: `MarketAggregator`, `BorrowModule`, `LiquidationModule`, `RepayModule`, `SupplyModule`, `WithdrawModule`, `Oracle`, `TIP3TokenDeployer`, `UserAccount`, `UserAccountManager`, `Platform` and `WalletController`.
 }
 
 \subsection{Possible attack}
 
-It makes it possible to perform phishing attacks by deploying fake contracts with which the users can interact with. So instead of interacting with the real contract they interact with the fake. 
+It makes it possible to perform phishing attacks by deploying fake contracts with which the users can interact with. So instead of interacting with the real contract they interact with the fake one. 
 
 If a malicious user deploys a fake `UserAccountManager` which will deploy user's accounts. And one of the users requests a withdraw of their tokens. The owner of the fake `UserAccountManager` can either block the transaction stopping the user's from withdrawing their tokens, or ask them for a fee before processing their request.
 
@@ -62,7 +58,7 @@ If a malicious user deploys a fake `UserAccountManager` which will deploy user's
 \section{Unsafe role assignement}
 
 \issueCritical{Unsafe role assignement in {\tt IRoles.sol}}{
-  The role setter functions {\tt setUpgrader} and {\tt setParamChanger} in the {\tt IRoles} abstract contract (file: "IRoles.sol") allow the contract owner to assign the upgrader or paramChanger role to the provided address or unassign it. The function should test that the provided address's value is not zero. Otherwise the owner can mistakingly give that right to all external users, which would make it possible for anyone to modify the functioning of the system. If the goal is to assign those roles to external users, then it's their pubkeys that should be stored, not adresses.
+  The role setter functions {\tt setUpgrader} and {\tt setParamChanger} in the {\tt IRoles} abstract contract (file: "IRoles.sol") allow the contract owner to assign the upgrader or parameter changer role to the provided address or unassign it. The function should test that the provided address's value is not zero. Otherwise the owner can mistakingly give that right to all external users, which would make it possible for anyone to modify the functioning of the system. If the goal is to assign those roles to external users, then it's their pubkeys that should be stored, not their adresses.
 }
 
 \section{Internal function names}
@@ -102,7 +98,7 @@ If a malicious user deploys a fake `UserAccountManager` which will deploy user's
   Are unused. Unused modifiers should be removed from the code as they are useless and they clutter the code.
 }
 
-\input{audit/Giver.tex} %ignored for now
+\input{audit/Giver.tex}
 \input{audit/MarketMath.tex}
 \input{audit/MarketOperations.tex}
 \input{audit/MarketPayloads.tex}

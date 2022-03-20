@@ -2,7 +2,7 @@
 
 \section{System purpose}
 
-Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system implemented on the Everscale Blockchain. Its main purpose is to provide Everscale users with a realiable way to lend and borrow cryptocurrency tokens. It makes it possible for users to generate profits on tokens they supply for lending and to acquire temporarily tokens by borrowing them instead of buying them.
+Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system implemented on the Everscale Blockchain. Its main purpose is to provide Everscale users with a realiable way to lend and borrow cryptocurrency tokens. It makes it possible for users to generate profits on tokens they supply for lending and to temporarily acquire tokens by borrowing them instead of buying them.
 
 \section{Terms of the system domain}
 
@@ -17,19 +17,21 @@ Everscalend is a DEFI (DEcentralized FInance) lending and borrowing system imple
 
   vToken & A virtual token, it is a currency that only exists on Everscalend and it is used to determine the amount of tokens that a supplier owns in a market. vTokens are acquired by the users when they supply some tokens to the market. When interest rate is accumulated on the supplied tokens to the market, the exchange rate from the vTokens to the real tokens increases to account for the accumulated interest that the suppliers will get to retrieve when they withdraw their tokens. \\\hline
 
-  Collateral & An amount of vTokens that a borrower has to have in order to borrow some amount of real tokens that. Everscalend like other DEFI lending systems is over-collateralized which means that the collateral has to be worth more than the amount of tokens that will be borrowed. \\\hline
+  Collateral & An amount of vTokens that a borrower has to have in order to borrow some amount of real tokens. Everscalend like other DEFI lending systems is over-collateralized which means that the collateral has to be worth more than the amount of tokens that will be borrowed. \\\hline
 
   Collateral factor & Ranging from 0 to 1, it represents the amount of tokens that can be borrowed for a collateral. e.g. a collateral factor of 0.9 allows the borrowing of a number of tokens worth $90\%$ of the collateral. \\\hline
 
   Account health & The sum of the USD value of a user's supplied tokens divided by the sum of the USD value of all the tokens they borrowed. It is used to determine whether a user is eligible for liquidation or not. When the account health is greater than one, we say that the user's account is healthy, otherwise it is unhealthy. \\\hline
 
-  Liquidation & The process in which some user's debt is liquidated by another user, by paying a portion of the owed tokens in exchange for the borrower's vTokens at a better exchange rate than the market. \\\hline
+  Borrowing capacity & The sum of the USD value of a user's supplied tokens minus the sum of the USD value of all the tokens they borrowed. It represents the maximum worth of the tokens the user can borrow. \\\hline
+
+  Liquidation & The process in which some user's debt is liquidated by another user, by paying a portion of the owed tokens in exchange for the borrower's vTokens at a better exchange rate than the market price. \\\hline
 
   Liquidation Multiplier & A value superior to 1. It is the amount by which the amount of vTokens that the liquidator should get by market price is multiplied to increase the amount they really get. \\\hline
 
   Reserve factor & Ranging from 0 to 1, it represents the portion of the interest rate that should be stored in the reserve whenever it is acquired. \\\hline
 
-  Reserve & A protected portion of the accumulated interest rate on the supplied tokens. It serve as a protection of the suppliers in case they do some borrowing and become liquidable. The liquidators will only be able to take the tokens that aren't part of the reserve (Which is referred to as the cash). \\\hline
+  Reserve & A protected portion of the accumulated interest rate on the supplied tokens. It serves as a protection of the suppliers' tokens in case they do some borrowing and become liquidable. The liquidators will only be able to take the tokens that aren't part of the reserve (Which is referred to as the cash). \\\hline
 
   Index & Refers to the interest rate index, which is a value that captures the history of interest rates of a market. It is updated after each transaction to compound the interest since the previous index. \\\hline
 \end{tabularx}
@@ -45,9 +47,7 @@ The following mathematical notations are used in the document to simplify the eq
 \newcommand\vT[1]{\mathit{vT(#1)}}
 
 \newcommand\ER[2]{\mathit{ER(#1, #2)}}
-
 \newcommand\TBA[1]{\mathit{TBA(#1)}}
-\newcommand\C[1]{\mathit{C(#1)}}
 
 \newcommand\UR[1]{\mathit{UR(#1)}}
 \newcommand\UMul[1]{\mathit{UM(#1)}}
@@ -64,9 +64,7 @@ The following mathematical notations are used in the document to simplify the eq
 \newcommand\AH[1]{\mathit{AH(#1)}}
 \newcommand\BC[1]{\mathit{BC(#1)}}
 
-\newcommand\SI[1]{\mathit{SI(#1)}}
 \newcommand\BI[1]{\mathit{BI(#1)}}
-
 \newcommand\USA[2]{\mathit{USA(#1, #2)}}
 \newcommand\UBA[2]{\mathit{USA(#1, #2)}}
 
@@ -84,8 +82,7 @@ The following mathematical notations are used in the document to simplify the eq
 
   $\ER{\T{1}}{\T{2}}$: & Exchange rate from the token $\T{1}$ to the token $\T{2}$, aka the $x$ in: $1\ \T{1} = x \T{2}$. \\\hline
 
-  $\TBA{T}$: & The amount of borrowed tokens in then market of the token $T$. \\\hline
-  $\C{T}$: & Amount of cash in the market of the token $T$. \\\hline
+  $\TBA{T}$: & Amount of borrowed tokens in the market of the token $T$. \\\hline
 
   $\UR{T}$: & Utilization ratio of the market of the token $T$ \\\hline
   $\UMul{T}$: & Utilization multiplier of the market of the token $T$. \\\hline
@@ -94,7 +91,7 @@ The following mathematical notations are used in the document to simplify the eq
   $\RF{T}$: & Reserve factor of the market of the token $T$. \\\hline
 
   $\RTB{T}$: & Real token balance of the market of the token $T$. \\\hline
-  $\VTB{T}$: & vToken balance of the market of the token $T$. \\\hline
+  $\VTB{T}$: & vToken balance of the market of the token $T$, aka the total amount of vTokens produced by the market. \\\hline
   $\RES{T}$: & Amount of tokens stored in the reserves of the market of the token $T$. \\\hline
 
   $\CF{T}$: & Collateral factor for a token T. \\\hline
@@ -102,7 +99,6 @@ The following mathematical notations are used in the document to simplify the eq
   $\AH{u}$: & A user $u$'s account health. \\\hline
   $\BC{u}$: & A user $u$'s borrowing capacity. \\\hline
   
-  $\SI{u}$: & A user $u$'s supply information. \\\hline
   $\BI{u}$: & A user $u$'s borrowing information. \\\hline
   
   $\USA{u}{T}$: & A user $u$'s supplied amount of tokens of type $T$. \\\hline
@@ -111,7 +107,6 @@ The following mathematical notations are used in the document to simplify the eq
   $\TSAV{u}:$ & Value in USD of a user $u$'s total supplied amount. \\\hline
   $\TBAV{u}:$ & Value in USD of a user $u$'s total borrowed amount. \\\hline
   $\uvTA{u}{T}$: & Amount of vTokens that a user $u$ owns which have as an underlying token $T$. \\\hline
-
 
   $\IND{T}{n}$: & $n$th interest rate index of the market of the token $T$. \\\hline
   $\INDL{T}$: & Latest interest rate index of the market of the token $T$. \\\hline
@@ -132,10 +127,9 @@ In this section we describe how the system works.
 
 A user may be part of three different groups of users with different rights:
 \begin{itemize}
-  \item The admin group (or \verb|owner| as there is only one user in the group per contract) who is the deployer of the main contracts of the system like \verb|MarketAggregator|, \verb|WalletController| or \verb|Oracle|.
-Being part of this group gives the right to modify all the parameters of the system, and in particular to assign users to groups.
-  \item The \verb|Upgrader| group: being part of this group gives the right to upgrades the code of the contracts.
-  \item The \verb|Parameter changer| group: being part of this group gives them the to modify some of the parameters of the system.
+  \item The admin group (or \verb|owner| as there is only one user in the group per contract) who is the deployer of the main contracts of the system like \verb|MarketAggregator|, \verb|WalletController| or \verb|Oracle|. Being part of this group gives the use the right to modify all the parameters of the system, and in particular to assign users to groups.
+  \item The \verb|Upgrader| group: being part of this group gives the right to upgrade the code of the contracts.
+  \item The \verb|Parameter changer| group: being part of this group gives the right to modify some of the parameters of the system.
 \end{itemize}
 
 All other users can only interact with the system to realise the market opeartions (supply, borrow ...) without being able to manually change the parameters of the system.
@@ -152,7 +146,7 @@ The supplier receives vTokens for their supply that they can use as collateral t
 
 \subsubsection{Withdraw}
 
-A user who owns vTokens can pay with them to withdraw the tokens he supplied. The user can do it at any time provided that their account is healthy, aka $\AH{u} > 1$ with $\AH{u}$ being the user $u$ account health
+A user who owns vTokens can pay with them to withdraw the tokens he supplied. The user can do it at any time provided that their account is healthy, aka $\AH{u} > 1$ with $\AH{u}$ being the user $u$'s account health
 
 \subsubsection{Borrow}
 To borrow a certain amount of some token:
@@ -169,7 +163,7 @@ $\BC{u}$ represents the amount of vTokens that the user can still use as collate
 A borrower can repay the amount they borrowed by returning it to the market. By doing that the collateral they set for the borrowing is freed and can be used to borrow other tokens.
 
 \subsubsection{Liquidate}
-% is the repetition necessary?
+
 When a user's account is unhealthy, aka ($\AH{u} < 1$), the liquidation of his debt becomes possible. The liquidation process consists of selling the borrower's collateral vTokens at a discount in exchange for the repayment of the borrower's debt or a portion of it.
 
 The purpose of this mecanism is to financially incentivize the liquidators to add liquidity to the system and pay other users' debts.
@@ -178,28 +172,28 @@ The purpose of this mecanism is to financially incentivize the liquidators to ad
 
 \subsubsection{Interest acquisition}
 
-The values of interest rates increase when the demand is high and decrease when it is low. The calculation of the real interest requires some intermediary variables:
+The values of interest rates increase when the demand is high and decrease when it is low. The calculation of the accumulated interest requires some intermediary variables:
 
 \begin{itemize}
   \item The utilisation rate $\UR{T}$ for the market of the token $T$:
   $$
-    \UR{T} = \frac{ \TBA{T} }{ \RTB{T} + \TBA{T} }
+    \UR{T} = \frac{ \TBA{T} }{ \TBA{T} + \RTB{T} }
   $$
   The utilisation rate unifies supply and borrowing demand into a single variable.
   \item The borrowing interest rate $\BIR{T}$ for the market of the token $T$:
   $$
     \BIR{T} = \UR{T} * \UMul{T} + \UBR{T}
-  $$ % in: MarketOperations.calculateBorrowInterestRate
+  $$
   \item the simple interest factor $\SIF{T}$ for the market of the token $T$:
   $$
     \SIF{T} = \BIR{T} \times \Delta t
   $$
+  with $\Delta t$ being the time difference in seconds between the current time and the last moment at which the interest rate was calculated.
 \end{itemize}
 The accumulated interest for the market of the token $T$ can then be calculated as follows:
 $$
   \AI{T} = \TBA{T} \times \SIF{T}
-$$ % in: MarketsAggregator.finterestAccumulated
-with $\Delta t$ being the time difference in seconds between the current time and the last moment at which the interest rate was calculated.
+$$
 
 \subsubsection{Interest rate indexes}
 
@@ -211,13 +205,13 @@ With: $\IND{T}{0} = 1$.
 
 \subsubsection{Reserves}
 
-When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve, the rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding $(\AI{T} \times \RF{T})$ to it.
+When interest is accumulated, a portion of it, the size of which is determined by the reserve factor, is put in a reserve. The rest of it is stored as cash. After accumulating the interest, the reserve is updated by adding $(\AI{T} \times \RF{T})$ to it.
 
-The purpose of the reserves is to protect a portion of the lenders interest so that they don't lose everything in case of liquidation, only their cash can be liquidated. %reference code
+The purpose of the reserves is to protect a portion of the lenders' accumulated interest so that they don't lose everything in case of liquidation. Only their cash can be liquidated.
 
 \subsubsection{vToken exchange rate calculation}
 
-As stated previously the exchange rates from vTokens to real tokens depend on the supply and borrowing demand of those tokens. It is calculated as follows:
+As stated previously the exchange rates from vTokens to real tokens depends on the supply and borrowing demand for those tokens. It is calculated as follows:
 
 $$
   \ER{\vT{T}}{T} = \frac{\RTB{T} + \TBA{T} - \RES{T}}{\VTB{T}}
@@ -225,7 +219,7 @@ $$
 
 \subsubsection{Account health and borrow capacity calculation}
 
-A user $u$'s account health $\AH{u}$ determines whether or not it is liquidable, if $\AH{u} < 1$ then it is otherwise it isn't. If the user's account is liquidable then the user can't withdraw their tokens or borrow more tokens before some other users liquidiates their debt or they supply more tokens to the market to improve their account's health. The account's health is calculated whenever the user tries to perform any market operation or gets one of his loans liquidated.
+A user $u$'s account health $\AH{u}$ determines whether or not it is liquidable, if $\AH{u} < 1$ then it is otherwise it isn't. If the user's account is liquidable then the user can't withdraw their tokens or borrow more tokens before some other users liquidiate their debt or they supply more tokens to the market to improve their account's health. The account's health is calculated whenever the user tries to perform any market operation or gets one of his loans liquidated.
 
 Calculating $\AH{u}$, first requires the calculation of The value of the user $u$'s supplied amount $\TSAV{u}$ and the value of his borrowed amount $\TBAV{u}$ as follows:
 $$
@@ -240,7 +234,7 @@ $$
 bval(T, ba, ind) = 
 \begin{dcases}
   0 & ba = 0\\
-  \frac{(ba \times ind)/ \INDL{T}}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{T} \neq ind \\
+  \frac{(ba \times \INDL{T})/ ind}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{T} \neq ind \\
   \frac{ba}{\ER{T}{\USD}} & ba \neq 0 \wedge \INDL{T} = ind
 \end{dcases}
 $$
@@ -252,14 +246,14 @@ $$
 $$
 
 
-A user's borrowing capacity is a value in USD that determines how many vTokens a user can use as collateral or redeem, the limit being that the vToken's worth has to be less that the user's borrowing capacity. The borrowing capacity is calculated as follows:
+A user's borrowing capacity is a value in USD that determines how many vTokens a user can use as collateral or redeem, the limit being that the vToken's worth has to be less than the user's borrowing capacity. The borrowing capacity is calculated as follows:
 $$
   \BC{u} = \TSAV{u} - \TBAV{u}
 $$
 
 \subsubsection{Liquidation}
 
-The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{T}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $\mathit{RP}$ of a borrower $u$'s debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get $vTA$ is calculated as follows:
+The amount of vTokens the liquidator gets is calculated thanks to the liquidation multiplier $\LMul{T}$ which is the value by witch the amount of tokens they would get at market price is multiplied to increase it. If a liquidator wants to repay a portion $\mathit{RP}$ of a borrower $u$'s debt in tokens of type $T$, the amount of the borrower's vTokens that the liquidator will get ($vTA$) is calculated as follows:
 $$
   vTA = min(\mathit{RP} \times \ER{T}{\vT{T}} \times \LMul{T}, \uvTA{u}{T})
 $$
@@ -267,12 +261,12 @@ Where $min$ is a function that returns the minimum of two values. The value of t
 
 \subsubsection{Module locking mecanism}
 
-To avoid messing up with the pools of tokens and market parameters while a user is performing an operation, a locking mecanism is used, that prevents the modification of the data that is used during the user's operation. The locks are especially necessary when try to extract tokens from the markets by borrowing or withdarwing, or from other users through liquidation.
+To avoid messing up with the pools of tokens and market parameters while a user is performing an operation, a locking mecanism is used. It's purpose is to prevent the modification of the data that is used during the user's operation. The locks are especially necessary when trying to extract tokens from the markets by borrowing or withdarwing, or from other users through liquidation.
 
 Such locks are used in:
 \begin{itemize}
   \item \verb|BorrowModule|: The lock prevents other users from borrowing at the same time.
-  \item \verb|LiquidationModule|: In this case the lock is on the liquidated user, the purpose is to prevent more than one user liquidating the same user's debt.
+  \item \verb|LiquidationModule|: In this case the lock is on the liquidated user, the purpose is to prevent more than one user liquidating the same user's debt at the same time.
   \item \verb|WithdrawModule|: To prevent other users from withdrawing while one of them has started that process.
   \item \verb|UserAccount|: This conract uses two locks called \verb|borrowLock| and \verb|liquidationLock|. As their names suggest, \verb|borrowLock| locks the user's account during the processing of a borrow request, stopping the user from doing another one before the current one is finished. The \verb|liquidationLock| stops the user from withdarwing or borrowing while he is being liquidated.
 \end{itemize}
@@ -309,7 +303,7 @@ It mainly serves as a container for all the necessary information surrounding th
 
 \subsubsection{Operations modules}
 
-These smart contracts are used to help perform the market operations by doing the necessary math for these operations.
+These smart contracts are used to help perform the market operations by doing the necessary math for these operations and fetching the necessary up to date data to perform these operations.
 
 \paragraph*{The smart contracts:}
 \begin{itemize}
@@ -366,14 +360,14 @@ It's the smart contract that controls all the TIP-3 wallets of the markets and m
 \paragraph*{Interactions:}
 \begin{itemize}
   \item MarketsAggregator: to communicate to it the details of the market operations that require TIP-3 token transfer into the wallets of the markets.
-  \item TonTokenWallet: to transfer tokens a user's wallet.
+  \item TonTokenWallet: to do tokens transfers in a user's wallet.
 \end{itemize}
 
 \subsubsection{UserAccount}
 
 It's used to store information about how a user interacts with the markets, like how much they borrowed from which market and how much they supplied to which market. It also allows the user to perform the borrow and withdraw operations.
 
-It interacts only with UserAccountManager, which can request the information and to which it returns it.
+It interacts only with UserAccountManager, which can request the information and update it.
 
 \subsubsection{UserAccountManager}
 
@@ -394,7 +388,7 @@ UserAccountManager serves as an intermediary between the user, the UserAccount c
 
 \subsection{User interactions}
 
-The users mainly interact with TonTokenWallet and UserAccount to perform the market operations mentioned previously. The operations in which the users have to request tokens are done through the UserAccount (withdraw, borrow) smart contract, while the operations in which the users have to send tokens are done through TonTokenWallet (supply, repay, liquidate). % are we sure that those are not done directly through WalletController?
+The users mainly interact with TonTokenWallet and UserAccount to perform the market operations mentioned previously. The operations in which the users have to request tokens are done through the UserAccount (withdraw, borrow) smart contract, while the operations in which the users have to send tokens are done through TonTokenWallet (supply, repay, liquidate).
 
 \section{Usage scenarios}
 
@@ -504,7 +498,7 @@ We start with a "sub-scenario" which is the one of updating the user's account h
 \subsection{Repay}
 \begin{enumerate}
   \item The user makes an internal transfer through \verb|TTK.internalTransfer| with a payload containing the repay operation code.
-  \item The payload with information about the token wallet is passed to \verb|WC.tokensReceivedCallback|.
+  \item The payload with information about the token wallet is passed to \\\verb|WC.tokensReceivedCallback|.
   \item The payload is decoded and after checking the operation code a call is made to \\\verb|MA.performOperationWalletController| with the necessary information about the supply operation.
   \item \verb|MA.performOperationWalletController| calls the Oracle to request the newest token prices, the response is receive with \verb|MA.receiveAllUpdatedPrices| which updates all the prices in the markets and calls \verb|MA.performOperation|.
   \item \verb|MA.performOperation| calls \verb|RM.performAction| which calls \verb|UAM.requestRepayInfo|.

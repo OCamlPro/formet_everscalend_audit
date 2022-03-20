@@ -9,15 +9,15 @@ Insolvency is when a borrower's loans become worth more than their collateral. I
 
 \subsection{Illiquidity}
 
-Illiquidity is when there aren't enough tokens in the market for a supplier to do a withdrawal or for a borrower take out a loan. It is problematic because users are supposed to have control over their tokens and be able to withdraw them whenever they want to, given that their account's health allows it. Illiquidity can happen if the price of the borrowed token increases rapidly also, that will disincentivise the borrowers and the liquidators from repaying the loan as they would rather keep holding their tokens or selling them. Same as the suppliers which will lead to a bank run (an event in which suppliers will try to withdraw their supplies as quickly as possible to avoid losing tokens) and that will lead to the slowest suppliers, especially if they want to borrow big amounts, to lose some or all of their tokens since the loans aren't getting repaid.
+Illiquidity is when there aren't enough tokens in the market for a supplier to do a withdrawal or for a borrower take out a loan. It is problematic because users are supposed to have control over their tokens and be able to withdraw them whenever they want to, given that their account's health allows it. Illiquidity can happen if the price of the borrowed token increases rapidly also, that will disincentivise the borrowers and the liquidators from repaying the loan as they would rather keep holding their tokens or selling them. Same as the suppliers, which will lead to a bank run (an event in which suppliers will try to withdraw their supplied tokens as quickly as possible to avoid losing them) and the consequence of it is that the slowest suppliers, especially if they want to borrow big amounts, will lose some or all of their tokens since the loans aren't getting repaid.
 
 \subsection{Unfair liquidation}
 
-To determine whether or not a user's borrowings should be liquidated. The Everscalend system checks if their account is healthy. If it isn't then they can be liquidated. The issue is that if a user has only one borrowing in which the borrowed tokens price jumps quickly and decreases their borrowing capacity to zero. All their borrowings become liquidable. Which makes it possible for liquidators to target only the cheapest ones, to make sure that the borrower's account stays unhealthy for as long as possible, so they can profit off of it, which could be considered unjust for the borrower especially if they have many borrows and only one that causes their account to be unhealthy. This will make the users weary of it happening to them and less likely to make many borrowings, especially big ones.
+To determine whether or not a user's borrowings should be liquidated. The Everscalend system checks if their account is healthy. If it isn't then they can be liquidated. The issue is that if a user has only one borrowing in which the borrowed tokens price jumps quickly and decreases their borrowing capacity to zero or less. All their borrowings become liquidable. Which makes it possible for liquidators to target only the cheapest ones, to make sure that the borrower's account stays unhealthy for as long as possible, so they can profit off of it, which could be considered unjust for the borrower especially if they have many borrows and only one that causes their account to be unhealthy. This will make the users weary of it happening to them and less likely to make many borrowings, especially big ones.
 
 \subsection{Centralization}
 
-The risk that comes with having an administrator or super user role which gives the detainer of that role the capability to unilaterally and arbitrarily modify the functioning of the system is in itselft risky. Especially since many values like the collateral factor and liquidation multiplier are editable with an admin role, he can also decide who can and who can't change market parameters. Therefore control over those parameters and who and how they can be changed need to be clarified. There needs to be a guarantee that one super user can't manually and unilaterally modify the entire functioning of the system.
+The risk that comes with having an administrator or super user role which gives the detainer of that role the capability to unilaterally and arbitrarily modify the functioning of the system. Especially since many values like the collateral factor and liquidation multiplier are editable with an admin role, he can also decide who can and who can't change market parameters. Therefore control over those parameters and who and how they can be changed need to be clarified. There needs to be a guarantee that one super user can't manually and unilaterally modify the entire functioning of the system in a way that doesn't benefit the market and the users.
 
 
 \section{Smart contract risks}
@@ -28,16 +28,12 @@ Math operations use approximations and rounding. It could lead in some particula
 
 \subsection{Non liquidation}
 
-To determine whether a user's loans can be liquidated or not, his account health has to be calculated, it if his account is unhealthy a notification is send to the system informing the other users of that. In Everscalend the user 's account health is calculated whenever they try to perform some operation. If the checks are not regularly and externally done, a user who does not perform any operation for a while, can end up having an unhealthy account without it being notified to the other users of the system, which could lead to the liquidation not happening. A user can also wait without doing any operation, until their account health raises back again or they get enough tokens to suplly to the market to raise it by themselves.
+To determine whether a user's loans can be liquidated or not, his account health has to be calculated, if his account is unhealthy a notification is sent to the system informing the other users of that. In Everscalend the user's account health is calculated whenever they try to perform some operation. If the checks are not regularly and externally done, a user who does not perform any operation for a while, can end up having an unhealthy account without it being notified to the other users of the system, which could lead to the liquidation not happening. A user can also wait without doing any operation, until their account health raises back again or they get enough tokens to suplly to the market to raise it by themselves.
 
-\subsection{Locking} %unlocking in case of failure or operation not finishing
+\subsection{Locking}
 
 Using locks in programs is sometimes necessary but it is always tricky. The developers have the make sure that locks are locked and unlocked at the right times. Otherwise there are various risks like data corruption or permanently locking some code and making it unusable. There is also the risk of the locks taking too long to be unlocked, making the system less performant.
 
-%\subsection{Double spending risk} %locking system % Can this really happen?
+\subsection{Visibility}
 
-%Double spending is when a user tries to use the same amount of tokens to pay for two different things and profit off of that. It can happen for example if a supplier wishes to get twice the amount of vTokens with the same supply or when a liquidator tries to liquidate with the same amount twice.
-
-\subsection{Visibility} % Use of modifiers
-
-It involves all the risks of having functions in contracts that are accessible to users which are not intended to use them. Especially if they are functions that write information on the system and significantly affect it's functioning.
+It involves all the risks of having functions in contracts that are accessible to users which are not suppposed to be able to use them. Especially if they are functions that write information on the system and significantly affect it's functioning.

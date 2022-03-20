@@ -26,5 +26,4 @@ In file {\tt Platform.sol}.
   }
 \end{lstlisting}
 
-\issueMajor{{\tt tvm.accept} in a private function}{Private and internal functions should not have a {\tt tvm.accept}, especially without checks.}
-
+\issueMajor{{\tt tvm.accept} in a private function}{Private and internal functions should not have a {\tt tvm.accept}, as they might be called by an external function that is not supposed to do a {\tt tvm.accept}.}
